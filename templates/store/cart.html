@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load humanize %}
+
 {% load static %}
 
 {% block content %}
@@ -12,11 +14,11 @@
         <!-- ============================ COMPONENT 1 ================================= -->
 
         {% if not cart_items %}
-            <h2 class="text-center">El Carrito de Compras esta Vacio</h2>
-            <br>
-            <div class="text-center">
-                <a href="{% url 'store' %}" class="btn btn-primary">Continua Comprando</a>
-            </div>
+        <h2 class="text-center">El Carrito de Compras esta Vacio</h2>
+        <br>
+        <div class="text-center">
+            <a href="{% url 'store' %}" class="btn btn-primary">Continua Comprando</a>
+        </div>
         {% else %}
         <div class="row">
             <aside class="col-lg-9">
@@ -40,8 +42,16 @@
                                         <div class="aside"><img src="{{ cart_item.product.images.url }}" class="img-sm">
                                         </div>
                                         <figcaption class="info">
-                                            <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
-                                            <p class="text-muted small">Matrix: 25 Mpx <br> Marca: Canon</p>
+                                            <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{
+                                                cart_item.product.product_name }}</a>
+                                            <p class="text-muted small">
+                                                {% if cart_item.variations.all %}
+                                                {% for item in cart_item.variations.all %}
+                                                {{ item.variation_category }} : {{ item.variation_value }} <br>
+                                                {% endfor %}
+                                                {% endif %}
+
+                                            </p>
                                         </figcaption>
                                     </figure>
                                 </td>
@@ -50,29 +60,44 @@
                                     <div class="col">
                                         <div class="input-group input-spinner">
                                             <div class="input-group-prepend">
-                                                <a href="{% url 'remove_cart' cart_item.product.id %}"
+                                                <a href="{% url 'remove_cart' cart_item.product.id cart_item.id %}"
                                                     class="btn btn-light" type="button" id="button-plus"> <i
                                                         class="fa fa-minus"></i> </a>
                                             </div>
                                             <input type="text" class="form-control" value="{{ cart_item.quantity }}">
                                             <div class="input-group-append">
-                                                <a href="{% url 'add_cart' cart_item.product.id %}"
-                                                    class="btn btn-light" type="button" id="button-minus"> <i
-                                                        class="fa fa-plus"></i> </a>
+
+                                       <form action="{% url 'add_cart' cart_item.product.id %}" method="POST">
+  {% csrf_token %}
+  {% for item in cart_item.variations.all %}
+    <input type="hidden" name="{{ item.variation_category|lower }}" value="{{ item.variation_value|lower }}">
+  {% endfor %}
+  <button class="btn btn-light" type="submit"><i class="fa fa-plus"></i></button>
+</form>
+
+
+                                               
                                             </div>
                                         </div> <!-- input-group.// -->
                                     </div> <!-- col.// -->
                                 </td>
+
+
+
                                 <td>
                                     <div class="price-wrap">
-                                        <var class="price">Gs. {{ cart_item.sub_total }}</var>
-                                        <small class="text-muted">Gs. {{ cart_item.product.price }} </small>
+                                        <var class="price">Gs. {{ cart_item.sub_total|intcomma }}</var>
+                                        <small class="text-muted">Gs. {{ cart_item.product.price|intcomma }} </small>
                                     </div> <!-- price-wrap .// -->
                                 </td>
                                 <td class="text-right">
-                                    <a href="{% url 'remove_cart_item' cart_item.product.id %}" class="btn btn-danger">
-                                        Eliminar</a>
+                                    <a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}"
+                                        class="btn btn-danger btn-sm">
+                                        <i class="fa fa-trash"></i> Eliminar
+                                    </a>
                                 </td>
+
+
                             </tr>
 
                             {% endfor %}
@@ -88,15 +113,15 @@
                     <div class="card-body">
                         <dl class="dlist-align">
                             <dt>Precio Total:</dt>
-                            <dd class="text-right">Gs. {{ total }}</dd>
+                            <dd class="text-right">Gs. {{ total|intcomma }}</dd>
                         </dl>
                         <dl class="dlist-align">
                             <dt>Impuesto:</dt>
-                            <dd class="text-right"> Gs. {{ tax }}</dd>
+                            <dd class="text-right"> Gs. {{ tax|intcomma }}</dd>
                         </dl>
                         <dl class="dlist-align">
                             <dt>Total:</dt>
-                            <dd class="text-right text-dark b"><strong>Gs. {{ grand_total }}</strong></dd>
+                            <dd class="text-right text-dark b"><strong>Gs. {{ grand_total|intcomma }}</strong></dd>
                         </dl>
                         <hr>
                         <p class="text-center mb-3">
