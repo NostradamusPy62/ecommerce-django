@@ -271,6 +271,8 @@ def cart(request, total=0, quantity=0, cart_items=None):
     cart_items = []
     tax = 0
     grand_total = 0
+    exchange_rate = 7150
+    usd_total = 0
     try:
 
         if request.user.is_authenticated:
@@ -284,6 +286,7 @@ def cart(request, total=0, quantity=0, cart_items=None):
 
         tax = (10*total)/100
         grand_total = total + tax
+        usd_total = round(grand_total / exchange_rate, 2)
     except ObjectDoesNotExist:
         cart_items = []
 
@@ -293,6 +296,8 @@ def cart(request, total=0, quantity=0, cart_items=None):
         'cart_items': cart_items,
         'tax': tax,
         'grand_total': grand_total,
+        'usd_total': usd_total,
+        'exchange_rate': exchange_rate,
     }
 
             

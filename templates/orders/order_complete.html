@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="container" style="margin: 50px auto; max-width: 900px;">
+    <!-- Icono de éxito -->
+    <center>
+        <i class="fas fa-check-circle" style="font-size: 72px; margin-bottom: 20px; color: #28A745;"></i>
+    </center>
+    <h2 class="text-center">¡Tu pago se realizó con éxito!</h2>
+    <p class="text-center">
+        En breve recibirás un correo con los detalles de tu pedido.
+    </p>
+    <div class="text-center mb-4">
+        <strong>Número de orden:</strong> {{ order_number }}
+    </div>
+
+    <!-- Panel de factura -->
+    <div class="container" style="padding: 30px; background: #f9f9f9; border-radius: 8px; margin-top: 30px;">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="invoice-logo">
+                    <img src="{% static 'images/logo01.png' %}" alt="Invoice logo" style="max-height: 40px;">
+                </div>
+            </div>
+            <div class="col-lg-6 text-right">
+                <div class="invoice-from">
+                    <ul class="list-unstyled">
+                        <li><strong>Factura a nombre de:</strong></li>
+                        <li>{{ order.full_name }}</li>
+                        <li>{{ order.full_address }}</li>
+                        <li>{{ order.city }}, {{ order.state }}, {{ order.country }}</li>
+                        <li>{{ order.phone }}</li>
+                        <li><strong>RUC:</strong> {{ order.ruc }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles de la orden -->
+        <div class="invoice-details mt-4">
+            <div class="well" style="padding: 15px; background: #fff; border: 1px solid #ddd;">
+                <ul class="list-unstyled mb-0">
+                    <li><strong>Orden:</strong> # {{ order_number }}</li>
+                    <li><strong>Transacción:</strong> {{ transID }}</li>
+                    <li><strong>Fecha de Orden:</strong> {{ order.created_at|date:"l, F d, Y" }}</li>
+                    <li><strong>Estado:</strong> {{ payment.status }} </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Items de la orden -->
+        <div class="invoice-items mt-4">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Descripción</th>
+                            <th class="text-center">Cantidad</th>
+                            <th class="text-center">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.orderproduct_set.all %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.product.product_name }}</strong>
+                                {% if item.variation.all %}
+                                    <p class="text-muted small mb-0">
+                                    {% for i in item.variation.all %}
+                                        {{ i.variation_category|capfirst }}: {{ i.variation_value|capfirst }}<br>
+                                    {% endfor %}
+                                    </p>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-center">{{ item.product_price|intcomma }} Gs.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="2" class="text-right">Sub Total:</th>
+                            <th class="text-center">{{ order.order_total|intcomma }} Gs.</th>
+                        </tr>
+                        <tr>
+                            <th colspan="2" class="text-right">IVA (10%):</th>
+                            <th class="text-center">{{ order.tax|intcomma }} Gs.</th>
+                        </tr>
+                        <tr>
+                            <th colspan="2" class="text-right">Total General:</th>
+                            <th class="text-center">{{ order.order_total|intcomma }} Gs.</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Botón PDF -->
+        <div class="text-center mt-4">
+            <a href="{% url 'generate_invoice_pdf' order_number=order_number %}" target="_blank" class="btn btn-primary">Ver Factura PDF</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="invoice-footer mt-3 text-center">
+            <p>¡Gracias por comprar con nosotros!</p>
+            <a href="{% url 'store' %}" class="btn btn-success mt-2">Seguir comprando</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

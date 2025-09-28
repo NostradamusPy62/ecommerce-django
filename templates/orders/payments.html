@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y bg">
+    <div class="container">
+        <div class="row">
+            <aside class="col-lg-8">
+                <!-- Dirección de Facturación -->
+                <div class="card">
+                    <h5 class="card-header">Dirección de Facturación</h5>
+                    <div class="card-body">
+                        <p class="card-text mb-0">{{ order.full_name }}</p>
+                        <p class="card-text mb-0">{{ order.full_address }}</p>
+                        <p class="card-text mb-0">{{ order.city }}</p>
+                        <p class="card-text mb-0">{{ order.state }}</p>
+                        <p class="card-text mb-0">{{ order.country }}</p>
+                        <p class="card-text mb-0">{{ order.email }}</p>
+                        <p class="card-text mb-0">{{ order.phone }}</p>
+                        {% if order.order_note %}
+                        <b>Detalle de la Orden:</b> {{ order.order_note }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Método de Pago -->
+                <div class="card">
+                    <h5 class="card-header">Método de Pago</h5>
+                    <div class="card-body">
+                        <p class="card-text">Paypal</p>
+                    </div>
+                </div>
+
+                <!-- Revisión de Productos -->
+                <div class="card">
+                    <h5 class="card-header">Revisión de Productos</h5>
+                    <div class="card-body">
+                        <table class="table table-borderless table-shopping-cart">
+                            <thead class="text-muted">
+                                <tr class="small text-uppercase">
+                                    <th scope="col">Producto</th>
+                                    <th scope="col" width="120">Cantidad</th>
+                                    <th scope="col" width="120">Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cart_item in cart_items %}
+                                <tr>
+                                    <td>
+                                        <figure class="itemside align-items-center">
+                                            <div class="aside"><img src="{{ cart_item.product.images.url }}" class="img-sm"></div>
+                                            <figcaption class="info">
+                                                <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
+                                                <p class="text-muted small">
+                                                    {% for item in cart_item.variations.all %}
+                                                    {{ item.variation_category }} : {{ item.variation_value }} <br>
+                                                    {% endfor %}
+                                                </p>
+                                            </figcaption>
+                                        </figure>
+                                    </td>
+                                    <td>{{ cart_item.quantity }}</td>
+                                    <td>
+                                        <div class="price-wrap">
+                                            <var class="price">Gs. {{ cart_item.sub_total|intcomma }}</var>
+                                            <small class="text-muted">Gs. {{ cart_item.product.price|intcomma }}</small>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Resumen de Pago -->
+            <aside class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <dl class="dlist-align">
+                            <dt>Precio Total:</dt>
+                            <dd class="text-right">Gs. {{ total|intcomma }}</dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt>Impuesto:</dt>
+                            <dd class="text-right">Gs. {{ tax|intcomma }}</dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt>Total:</dt>
+                            <dd class="text-right text-dark b"><strong>Gs. {{ grand_total|intcomma }}</strong></dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt>Total en USD:</dt>
+                            <dd class="text-right text-dark b">
+                                <strong>$ {{ usd_total }}</strong>
+                                <small class="text-muted">(Cambio: 1 USD = 7150 Gs.)</small>
+                            </dd>
+                        </dl>
+
+                        <hr>
+                        <p class="text-center mb-3">
+                            <img src="{% static 'images/misc/payments.png' %}" height="26">
+                        </p>
+
+                        <!-- Contenedor PayPal -->
+                        <div id="paypal-button-container"></div>
+                        <br>
+                        <button id="simular-pago" class="btn btn-success mt-3">Pago (simulador)</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<!-- SDK de PayPal -->
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD"></script>
+
+<script>
+function getCookie(name){
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++){
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0,name.length+1) === (name + '=')){
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const url = "{% url 'payments' %}";
+const csrf_token = getCookie('csrftoken');
+const orderID = "{{ order.order_number }}";
+const payment_method = 'PayPal';
+var redirect_url = "{% url 'order_complete' order.order_number %}";
+
+/* ---------------- BOTÓN PAYPAL REAL ---------------- */
+paypal.Buttons({
+    createOrder: function(data, actions) {
+        return fetch("{% url 'paypal_create_order' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrf_token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ orderID: orderID })
+        })
+        .then(res => res.json())
+        .then(orderData => orderData.id);
+    },
+    onApprove: function(data, actions) {
+        return fetch(`/api/paypal/order/${data.orderID}/capture/`, {
+            method: "POST",
+            headers: { "X-CSRFToken": csrf_token }
+        })
+        .then(res => res.json())
+        .then(orderData => {
+            // Guardar Payment en tu backend
+            return fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRFToken": csrf_token },
+                body: JSON.stringify({
+                    orderID: orderID,
+                    transID: orderData.id,
+                    payment_method: payment_method,
+                    status: orderData.status
+                })
+            });
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("Pago PayPal guardado:", data);
+            window.location.href = "{% url 'order_complete' order.order_number %}";
+            window.location.href = redirect_url + '?order_number='+data.order_number+'&payment_id'+data.transID;
+        })
+        .catch(err => {
+            console.error("Error guardando pago PayPal:", err);
+            alert("Hubo un error guardando el pago. Revisa la consola.");
+        });
+    }
+}).render("#paypal-button-container");
+
+/* ---------------- BOTÓN SIMULADOR ---------------- */
+document.getElementById("simular-pago").addEventListener("click", function() {
+    const transID = "SIMULATED-" + Date.now();
+    const status = "COMPLETED";
+
+    fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrf_token },
+        body: JSON.stringify({
+            orderID: orderID,
+            transID: transID,
+            payment_method: payment_method,
+            status: status
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Pago simulado guardado:", data);
+        // Redirigir pasando order_number y transID
+        window.location.href = redirect_url + '?order_number=' + data.order_number + '&payment_id=' + data.transID;
+    })
+    .catch(err => {
+        console.error("No se pudo guardar el pago simulado:", err);
+        alert("No se pudo completar la simulación del pago. Revisa la consola.");
+    });
+});
+</script>
+{% endblock %}

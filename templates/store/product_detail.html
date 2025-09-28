@@ -89,9 +89,41 @@
     <div class="col-md-9">
 
       <header class="section-heading">
-        <h3>Customer Reviews </h3>
+        <h3>Calificacion de Clientes </h3>
 
       </header>
+
+      <form action="" method="POST">
+        {% csrf_token %}
+        <h5>Escribe Tu comentario</h5>
+        <div class="">
+          <label for="">Como calificarias este producto</label>
+          <br>
+
+          <div class="rate">
+            <input type="radio" name="rating" value="5" id="rating10"><label for="rating10" title="5"></label>
+            <input type="radio" name="rating" value="4.5" id="rating9"><label for="rating9" title="4.5" class="half"></label>
+            <input type="radio" name="rating" value="4" id="rating8"><label for="rating8" title="4"></label>
+            <input type="radio" name="rating" value="3.5" id="rating7"><label for="rating7" title="3.5" class="half"></label>
+            <input type="radio" name="rating" value="3" id="rating6"><label for="rating6" title="3"></label>
+            <input type="radio" name="rating" value="2.5" id="rating5"><label for="rating5" title="2.5" class="half"></label>
+            <input type="radio" name="rating" value="2" id="rating4"><label for="rating4" title="2"></label>
+            <input type="radio" name="rating" value="1.5" id="rating3"><label for="rating3" title="1.5" class="half"></label>
+            <input type="radio" name="rating" value="1" id="rating2"><label for="rating2" title="1"></label>
+            <input type="radio" name="rating" value="0.5" id="rating1"><label for="rating1" title="0.5" class="half"></label>
+          </div>
+          
+          Titulo de comentario:
+          <input type="text" name="suject" class="form-control">
+
+          Comentario:
+          <textarea name="comentario" rows="4" class="form-control"></textarea>
+          <br>
+
+          <input type="submit" name="" value="Enviar Comentario" class="btn btn-primary">
+        </div>
+
+      </form>
 
       <article class="box mb-3">
         <div class="icontext w-100">
