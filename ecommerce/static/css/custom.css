@@ -1,0 +1,44 @@
+.rate {
+    display: inline-block;
+    border: 0;
+    direction: rtl; /* Para que el click funcione de derecha a izquierda */
+    unicode-bidi: bidi-override;
+}
+
+.rate > input {
+    display: none;
+}
+
+.rate > label {
+    float: right;
+    cursor: pointer;
+    font-size: 2rem; /* más grande y visible */
+    color: #ccc; /* color base */
+    margin: 0 0.1rem;
+}
+
+.rate > label:before {
+    font-family: "Font Awesome 5 Free"; /* asegúrate de tener FA5 */
+    font-weight: 900;
+    content: "\f005"; /* estrella llena */
+}
+
+.rate .half:before {
+    content: "\f089"; /* media estrella */
+    position: absolute;
+}
+
+input:checked ~ label,
+label:hover,
+label:hover ~ label {
+    color: #ffb503; /* dorado */
+}
+
+
+input :checked + label:hover ~ label:hover, input:checked ~ label:hover ~ label, label:hover ~ input:checked ~ label{
+    color: #cc9000;
+}
+
+.rating-start i{
+    color: #ffb503 !important;
+}
