@@ -1,0 +1,118 @@
+{% extends 'admin_panel/base.html' %}
+{% load humanize %}
+
+{% block title %}Productos - Panel Admin{% endblock %}
+{% block page_title %}Gestión de Productos{% endblock %}
+
+{% block content %}
+<div class="card card-dashboard">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Lista de Productos</h5>
+        <div>
+            <a href="{% url 'admin_panel:product_add' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nuevo Producto
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Filtros -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <form method="get" class="row g-2">
+                    <div class="col-md-5">
+                        <select name="category" class="form-select">
+                            <option value="">Todas las categorías</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"i" %}selected{% endif %}>
+                                {{ category.category_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <select name="stock" class="form-select">
+                            <option value="">Todo el stock</option>
+                            <option value="low" {% if request.GET.stock == 'low' %}selected{% endif %}>Stock bajo (≤10)</option>
+                            <option value="out" {% if request.GET.stock == 'out' %}selected{% endif %}>Sin stock</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-outline-primary w-100">Filtrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabla de productos -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            {% if product.images %}
+                            <img src="{{ product.images.url }}" alt="{{ product.product_name }}" 
+                                 style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                            {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-image text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ product.product_name }}</strong>
+                            <br>
+                            <small class="text-muted">{{ product.description|truncatewords:5 }}</small>
+                        </td>
+                        <td>{{ product.category.category_name }}</td>
+                        <td>Gs. {{ product.price|floatformat:0|intcomma }}</td>
+                        <td>
+                            <span class="badge {% if product.stock == 0 %}bg-danger{% elif product.stock <= 10 %}bg-warning{% else %}bg-success{% endif %}">
+                                {{ product.stock }} unidades
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {% if product.is_available %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ product.is_available|yesno:"Disponible,No disponible" }}
+                            </span>
+                        </td>
+                        <td>{{ product.created_date|date:"d/m/Y" }}</td>
+                        <td>
+                            <div class="btn-group table-actions">
+                                <a href="{% url 'admin_panel:product_edit' product.id %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'admin_panel:product_delete' product.id %}" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4">
+                            <i class="fas fa-box-open fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">No hay productos registrados</p>
+                            <a href="{% url 'admin_panel:product_add' %}" class="btn btn-primary">Agregar Primer Producto</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

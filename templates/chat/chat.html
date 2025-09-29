@@ -1,0 +1,374 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar con funcionalidades -->
+        <div class="col-md-3 sidebar">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Funciones del Chat</h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-outline-primary btn-sm mb-2 w-100" onclick="generateStockPDF()">
+                        📊 Descargar Stock PDF
+                    </button>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Productos por Categoría:</label>
+                        <select class="form-select" id="categorySelect" onchange="getProductsByCategory()">
+                            <option value="">Seleccionar categoría</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.category_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Comparar Productos:</label>
+                        <select class="form-select" id="productSelect1">
+                            <option value="">Producto 1</option>
+                        </select>
+                        <select class="form-select mt-2" id="productSelect2">
+                            <option value="">Producto 2</option>
+                        </select>
+                        <button class="btn btn-outline-success btn-sm mt-2 w-100" onclick="compareProducts()">
+                            🔄 Comparar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados de categorías -->
+            <div id="categoryResults" class="mt-3" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h6>Productos de la categoría</h6>
+                    </div>
+                    <div class="card-body" id="categoryProductsList">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área principal del chat -->
+        <div class="col-md-9">
+            <div class="card chat-container">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">💬 Asistente Virtual</h4>
+                    <span class="badge bg-light text-primary" id="connectionStatus">Conectado</span>
+                </div>
+
+                <div class="card-body chat-messages" id="chatMessages">
+                    {% for message in messages %}
+                    <div class="message user-message">
+                        <div class="message-header">
+                            <strong>{% if message.user %}{{ message.user.username }}{% else %}Tú{% endif %}</strong>
+                            <small class="text-muted">{{ message.timestamp|date:"H:i" }}</small>
+                        </div>
+                        <div class="message-content">{{ message.user_message }}</div>
+                    </div>
+                    <div class="message bot-message">
+                        <div class="message-header">
+                            <strong>🤖 Asistente</strong>
+                            <small class="text-muted">{{ message.timestamp|date:"H:i" }}</small>
+                        </div>
+                        <div class="message-content">{{ message.bot_response|linebreaks }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted mt-5">
+                        <p>¡Bienvenido! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?</p>
+                        <p>Puedo ayudarte con:</p>
+                        <ul class="list-unstyled">
+                            <li>✅ Información de productos y stock</li>
+                            <li>✅ Proceso de compra y envíos</li>
+                            <li>✅ Gestión de tu cuenta</li>
+                            <li>✅ Comparación de productos</li>
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="card-footer">
+                    <form id="chatForm">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            {{ form.message }}
+                            <button type="submit" class="btn btn-primary" id="sendButton">
+                                <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+                                <span id="buttonText">Enviar</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para comparación -->
+<div class="modal fade" id="comparisonModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">🔍 Comparación de Productos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="comparisonContent">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.chat-container {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: #f8f9fa;
+}
+
+.message {
+    margin-bottom: 1rem;
+    max-width: 80%;
+}
+
+.user-message {
+    margin-left: auto;
+}
+
+.bot-message {
+    margin-right: auto;
+}
+
+.message-header {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.message-content {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    word-wrap: break-word;
+}
+
+.user-message .message-content {
+    background-color: #007bff;
+    color: white;
+}
+
+.bot-message .message-content {
+    background-color: white;
+    border: 1px solid #dee2e6;
+}
+
+.sidebar {
+    background-color: #f8f9fa;
+    min-height: 80vh;
+    padding: 1rem;
+}
+
+.product-item {
+    border-bottom: 1px solid #eee;
+    padding: 0.5rem 0;
+}
+
+.product-item:last-child {
+    border-bottom: none;
+}
+</style>
+
+<script>
+// Cargar lista de productos al iniciar
+document.addEventListener('DOMContentLoaded', function() {
+    loadProductList();
+});
+
+function loadProductList() {
+    fetch('/chat/api/stock-list/')
+        .then(response => response.json())
+        .then(data => {
+            const select1 = document.getElementById('productSelect1');
+            const select2 = document.getElementById('productSelect2');
+            
+            select1.innerHTML = '<option value="">Producto 1</option>';
+            select2.innerHTML = '<option value="">Producto 2</option>';
+            
+            data.products.forEach(product => {
+                const option = `<option value="${product.id}">${product.display}</option>`;
+                select1.innerHTML += option;
+                select2.innerHTML += option;
+            });
+        });
+}
+
+// Manejo del formulario de chat
+document.getElementById('chatForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    sendMessage();
+});
+
+function sendMessage() {
+    const formData = new FormData(document.getElementById('chatForm'));
+    const button = document.getElementById('sendButton');
+    const spinner = document.getElementById('spinner');
+    const buttonText = document.getElementById('buttonText');
+    
+    // Mostrar spinner
+    spinner.classList.remove('d-none');
+    buttonText.textContent = 'Enviando...';
+    button.disabled = true;
+    
+    fetch('/chat/api/send-message/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            addMessageToChat(data.user_message, data.bot_response, data.timestamp);
+            document.getElementById('chatForm').reset();
+        } else {
+            alert('Error al enviar mensaje: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    })
+    .finally(() => {
+        spinner.classList.add('d-none');
+        buttonText.textContent = 'Enviar';
+        button.disabled = false;
+    });
+}
+
+function addMessageToChat(userMessage, botResponse, timestamp) {
+    const chatMessages = document.getElementById('chatMessages');
+    
+    // Mensaje del usuario
+    const userMsgDiv = document.createElement('div');
+    userMsgDiv.className = 'message user-message';
+    userMsgDiv.innerHTML = `
+        <div class="message-header">
+            <strong>Tú</strong>
+            <small class="text-muted">${timestamp}</small>
+        </div>
+        <div class="message-content">${userMessage}</div>
+    `;
+    
+    // Respuesta del bot
+    const botMsgDiv = document.createElement('div');
+    botMsgDiv.className = 'message bot-message';
+    botMsgDiv.innerHTML = `
+        <div class="message-header">
+            <strong>🤖 Asistente</strong>
+            <small class="text-muted">${timestamp}</small>
+        </div>
+        <div class="message-content">${botResponse.replace(/\n/g, '<br>')}</div>
+    `;
+    
+    chatMessages.appendChild(userMsgDiv);
+    chatMessages.appendChild(botMsgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function generateStockPDF() {
+    window.open('/chat/stock/pdf/', '_blank');
+}
+
+function getProductsByCategory() {
+    const categoryId = document.getElementById('categorySelect').value;
+    if (!categoryId) return;
+    
+    fetch('/chat/api/products-by-category/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ category_id: categoryId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultsDiv = document.getElementById('categoryResults');
+        const productsList = document.getElementById('categoryProductsList');
+        
+        if (data.success) {
+            resultsDiv.style.display = 'block';
+            productsList.innerHTML = '';
+            
+            if (data.products.length > 0) {
+                data.products.forEach(product => {
+                    const productDiv = document.createElement('div');
+                    productDiv.className = 'product-item';
+                    productDiv.innerHTML = `
+                        <strong>${product.name}</strong><br>
+                        <small>Precio: $${product.price} | Stock: ${product.stock}</small>
+                        <p class="mb-1">${product.description}</p>
+                    `;
+                    productsList.appendChild(productDiv);
+                });
+            } else {
+                productsList.innerHTML = '<p class="text-muted">No hay productos en esta categoría.</p>';
+            }
+        }
+    });
+}
+
+function compareProducts() {
+    const product1 = document.getElementById('productSelect1').value;
+    const product2 = document.getElementById('productSelect2').value;
+    
+    if (!product1 || !product2) {
+        alert('Por favor selecciona dos productos para comparar');
+        return;
+    }
+    
+    fetch('/chat/api/compare-products/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ product_ids: [product1, product2] })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('comparisonContent').innerHTML = 
+                data.comparison.replace(/\n/g, '<br>');
+            new bootstrap.Modal(document.getElementById('comparisonModal')).show();
+        } else {
+            alert('Error al comparar productos: ' + data.error);
+        }
+    });
+}
+
+// Función auxiliar para obtener cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

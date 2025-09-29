@@ -1,0 +1,101 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Editar Producto - Panel Admin{% endblock %}
+{% block page_title %}Editar Producto: {{ product.product_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-dashboard">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-edit text-warning"></i> Editar Producto
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            {% if product.images %}
+                            <img src="{{ product.images.url }}" alt="{{ product.product_name }}" 
+                                 class="img-fluid rounded" style="max-height: 200px;">
+                            {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                 style="height: 200px;">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="images" class="form-label">Cambiar Imagen</label>
+                                <input type="file" class="form-control" id="images" name="images" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="product_name" class="form-label">Nombre del Producto *</label>
+                            <input type="text" class="form-control" id="product_name" name="product_name" 
+                                   value="{{ product.product_name }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="slug" class="form-label">Slug *</label>
+                            <input type="text" class="form-control" id="slug" name="slug" 
+                                   value="{{ product.slug }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ product.description }}</textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="price" class="form-label">Precio (GS) *</label>
+                            <input type="number" class="form-control" id="price" name="price" 
+                                   value="{{ product.price }}" min="0" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="stock" class="form-label">Stock *</label>
+                            <input type="number" class="form-control" id="stock" name="stock" 
+                                   value="{{ product.stock }}" min="0" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="category" class="form-label">Categoría *</label>
+                            <select class="form-select" id="category" name="category" required>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if product.category.id == category.id %}selected{% endif %}>
+                                    {{ category.category_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="is_available" name="is_available" 
+                                   {% if product.is_available %}checked{% endif %}>
+                            <label class="form-check-label" for="is_available">Producto disponible</label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'admin_panel:product_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Actualizar Producto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

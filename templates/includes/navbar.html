@@ -11,7 +11,6 @@
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link"> Espanol </a>
-
                     </li>
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link"> USD </a>
@@ -39,21 +38,20 @@
                             <i class="fa fa-bars"></i> Categorias
                         </button>
                         <div class="dropdown-menu">
-
                             <a class="dropdown-item" href="{% url "store" %}">Todos</a>
                             {% for category in links %}
                             <a class="dropdown-item" href="{{ category.get_url }}">{{category.category_name}} </a>
-
                             {% endfor %}
                         </div>
                     </div> <!-- category-wrap.// -->
                 </div> <!-- col.// -->
                 <a href="{% url 'store' %}" class="btn btn-outline-primary">Tienda</a>
+                <a href="{% url 'chat:chat' %}" class="btn btn-primary">Chat AI</a>
+
                 <div class="col-lg  col-md-6 col-sm-12 col">
                     <form action="{% url 'search' %}" class="search">
                         <div class="input-group w-100">
                             <input type="text" class="form-control" style="width:60%;" placeholder="Buscar Productos" name="keyword">
-
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit">
                                     <i class="fa fa-search"></i>
@@ -72,19 +70,27 @@
                                 <a href="{% url 'login' %}">Login</a> <span class="dark-transp"> | </span>
                                 <a href="{% url 'register' %}"> Registrar</a>
                             </div>
-                            {% else %}
-
-
-                            <div class="widget-header">
+                        </div>
+                        {% else %}
+                        <div class="widget-header">
                             <small class="title text-muted">Bienvenido, {{ user.first_name }} </small>
                             <div>
                                 <a href="{% url 'dashboard' %}">Dashboard</a> <span class="dark-transp"> | </span>
+                                
+                                <!-- BOTÓN PANEL ADMIN PARA ROLES ESPECIALES -->
+                                {% if user.is_superadmin or user.is_admin or user.is_staff %}
+                                <a href="{% url 'admin_panel:dashboard' %}" class="text-warning">
+                                    {% if user.is_superadmin %}👑 SuperAdmin
+                                    {% elif user.is_admin %}🛡️ Admin
+                                    {% else %}📊 Vendedor{% endif %}
+                                </a> <span class="dark-transp"> | </span>
+                                {% endif %}
+                                
                                 <a href="{% url 'logout' %}">Cerrar Sesion</a>
                             </div>
-
-                            
-                            {% endif %}
                         </div>
+                        {% endif %}
+                        
                         <a href="{% url 'cart' %}" class="widget-header pl-3 ml-3">
                             <div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></div>
                             <span class="badge badge-pill badge-danger notify">{{ cart_count }}</span>
@@ -94,8 +100,4 @@
             </div> <!-- row.// -->
         </div> <!-- container.// -->
     </section> <!-- header-main .// -->
-
-
-
-
 </header>

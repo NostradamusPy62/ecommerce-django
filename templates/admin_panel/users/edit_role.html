@@ -1,0 +1,78 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Editar Roles - Panel Admin{% endblock %}
+{% block page_title %}Editar Roles: {{ user.email }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card card-dashboard">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-user-cog text-primary"></i> Gestión de Roles
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4 text-center">
+                    <h4>{{ user.full_name }}</h4>
+                    <p class="text-muted">{{ user.email }}</p>
+                    <p class="text-muted">Registrado: {{ user.date_joined|date:"d/m/Y" }}</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                                   {% if user.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">Usuario Activo</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="is_staff" name="is_staff" 
+                                   {% if user.is_staff %}checked{% endif %}>
+                            <label class="form-check-label" for="is_staff">Vendedor</label>
+                            <small class="form-text text-muted d-block">Puede ver pedidos y reportes</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="is_admin" name="is_admin" 
+                                   {% if user.is_admin %}checked{% endif %}>
+                            <label class="form-check-label" for="is_admin">Administrador</label>
+                            <small class="form-text text-muted d-block">Puede gestionar productos y categorías</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="is_superadmin" name="is_superadmin" 
+                                   {% if user.is_superadmin %}checked{% endif %}>
+                            <label class="form-check-label" for="is_superadmin">Super Administrador</label>
+                            <small class="form-text text-muted d-block">Acceso completo al sistema</small>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Advertencia:</strong> Los cambios en los roles afectan inmediatamente los permisos del usuario.
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'admin_panel:user_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

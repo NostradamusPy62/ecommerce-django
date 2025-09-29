@@ -58,109 +58,6 @@ def register(request):
 
     return render(request, 'accounts/register.html', context)
 
-#def login(request):
-    
-
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-
-        user = auth.authenticate(email=email, password=password)
-
-        if user is not None:
-            cart = Cart.objects.get(cart_id=_cart_id(request))
-            is_cart_item_exist = CartItem.objects.filter(cart=cart).exists()
-
-            try:
-                if is_cart_item_exist:
-                    cart_item = CartItem.objects.filter(cart=cart)
-
-                    product_variation = []
-                    for item in cart_item:
-                        variation = item.variations.all()
-                        product_variation.append(list(variation))
-
-
-                    cart_item = CartItem.objects.filter(user=user)
-                    ex_var_list = []
-                    id = []
-                    for item in cart_item:
-                        existing_variation = item.variations.all()
-                        ex_var_list.append(list(existing_variation))
-                        id.append(item.id)
-
-                        #product_variation = [1, 2, 3, 4, 5]
-                        # ex_var_list = [5, 6, 7, 8]
-
-                    for pr in product_variation:
-                        if pr in ex_var_list:
-                            index = ex_var_list.index(pr)
-                            item_id = id[index]
-                            item = CartItem.objects.get(id=item_id)
-                            item.quantity += 1
-                            item.user = user
-                            item.save()
-                        else:
-                            cart_item = CartItem.objects.filter(cart=cart)
-                            for item in cart_item:
-                                item.user = user
-                                item.save()
-
-            except:
-                pass
-
-            auth.login(request, user)
-            messages.success(request, 'Has iniciado sesion, exitosamente')
-            return redirect('dashboard')
-        else:
-            messages.error(request, 'Las credenciales son incorrectas')
-            return redirect('login')
-
-    return render(request, 'accounts/login.html')
-
-#def login(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-
-        user = auth.authenticate(email=email, password=password)
-
-        if user is not None:
-            try:
-                cart = Cart.objects.get(cart_id=_cart_id(request))
-            except Cart.DoesNotExist:
-                cart = None
-
-            if cart:
-                cart_items = CartItem.objects.filter(cart=cart)
-                for item in cart_items:
-                    # Verificar si el usuario ya tiene este producto con las mismas variaciones
-                    existing_items = CartItem.objects.filter(user=user, product=item.product)
-
-                    if item.variations.exists():
-                        existing_items = existing_items.filter(variations__in=item.variations.all())
-
-                    if existing_items.exists():
-                        existing_item = existing_items.first()
-                        existing_item.quantity += item.quantity
-                        existing_item.save()
-                        item.delete()  # borrar duplicado
-                    else:
-                        item.user = user
-                        item.cart = None
-                        item.save()
-
-                cart.delete()  # limpiar carrito anónimo después de fusionar
-
-            auth.login(request, user)
-            messages.success(request, 'Has iniciado sesión exitosamente')
-            return redirect('dashboard')
-        else:
-            messages.error(request, 'Las credenciales son incorrectas')
-            return redirect('login')
-
-    return render(request, 'accounts/login.html')
-
 def login(request):
     if request.method == 'POST':
         email = request.POST['email']
@@ -214,10 +111,12 @@ def login(request):
                 cart.delete()
 
             # Iniciamos sesión
-
-
             auth.login(request, user)
             messages.success(request, 'Has iniciado sesión exitosamente')
+
+            # Redirección inteligente para usuarios admin
+            if user.is_superadmin or user.is_admin or user.is_staff:
+                return redirect('admin_panel:dashboard')
 
             url = request.META.get('HTTP_REFERER')
             try:
@@ -228,8 +127,6 @@ def login(request):
                     return redirect(nextPage)
             except:
                 return redirect('dashboard')
-
-
 
         else:
             messages.error(request, 'Las credenciales son incorrectas')
@@ -263,30 +160,42 @@ def activate(request, uidb64, token):
     else:
         messages.error(request, 'La activacion es invalida')
         return redirect('register')
-"""
-@login_required(login_url='login')
-def dashboard(request):
-    orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
-    orders_count = orders.count()
-    context = {
-        'orders_count': orders_count,
-    }
-    return render(request, 'accounts/dashboard.html', context)
-"""
 
 @login_required(login_url='login')
 def dashboard(request):
     # Traer todas las órdenes del usuario
     orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
     orders_count = orders.count()
-    userprofile = UserProfile.objects.get(user_id=request.user.id)
+    
+    # SOLUCIÓN: Crear UserProfile si no existe
+    try:
+        userprofile = UserProfile.objects.get(user_id=request.user.id)
+    except UserProfile.DoesNotExist:
+        # Crear UserProfile automáticamente si no existe
+        userprofile = UserProfile.objects.create(
+            user=request.user,
+            profile_picture='default/default-user.png'
+        )
+    
     last_order = orders.first()  # la última orden realizada
+
+    # Información para mostrar botones de panel admin
+    show_admin_panel = request.user.is_superadmin or request.user.is_admin or request.user.is_staff
+    user_role = ""
+    if request.user.is_superadmin:
+        user_role = "SuperAdministrador"
+    elif request.user.is_admin:
+        user_role = "Administrador"
+    elif request.user.is_staff:
+        user_role = "Vendedor"
 
     context = {
         'orders_count': orders_count,
         'user': request.user,
-        'last_order': last_order,  # para mostrar facturación, fecha, etc.
+        'last_order': last_order,
         'userprofile': userprofile,
+        'show_admin_panel': show_admin_panel,
+        'user_role': user_role,
     }
     return render(request, 'accounts/dashboard.html', context)
 
@@ -296,7 +205,6 @@ def forgotPassword(request):
         email = request.POST['email']
         if Account.objects.filter(email=email).exists:
             user = Account.objects.get(email__exact=email)
-
 
             current_site = get_current_site(request)
             mail_subject = 'Resetear Password'
@@ -373,7 +281,6 @@ def edit_profile(request):
     else:
         user_form = UserForm(instance=request.user)
         profile_form = UserProfileForm(instance=userprofile)
-
 
     context = {
         'user_form': user_form,

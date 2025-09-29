@@ -1,0 +1,86 @@
+{% extends 'admin_panel/base.html' %}
+{% load humanize %}
+
+{% block title %}Pedidos - Panel Admin{% endblock %}
+{% block page_title %}Gestión de Pedidos{% endblock %}
+
+{% block content %}
+<div class="card card-dashboard">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Lista de Pedidos</h5>
+    </div>
+    <div class="card-body">
+        <!-- Filtros -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <form method="get" class="row g-2">
+                    <div class="col-md-8">
+                        <select name="status" class="form-select">
+                            <option value="">Todos los estados</option>
+                            {% for status in status_choices %}
+                            <option value="{{ status.0 }}" {% if request.GET.status == status.0 %}selected{% endif %}>
+                                {{ status.1 }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-outline-primary w-100">Filtrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabla de pedidos -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th># Pedido</th>
+                        <th>Cliente</th>
+                        <th>Email</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>
+                            <strong>#{{ order.order_number }}</strong>
+                        </td>
+                        <td>{{ order.full_name }}</td>
+                        <td>{{ order.email }}</td>
+                        <td>Gs. {{ order.order_total|floatformat:0|intcomma }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if order.status == 'Completed' %}bg-success
+                                {% elif order.status == 'Cancelled' %}bg-danger
+                                {% elif order.status == 'Accepted' %}bg-info
+                                {% else %}bg-warning{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'admin_panel:order_detail' order.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i> Ver
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">No hay pedidos registrados</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

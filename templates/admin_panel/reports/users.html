@@ -1,0 +1,95 @@
+{% extends 'admin_panel/base.html' %}
+{% load humanize %}
+
+{% block title %}Reporte de Usuarios - Panel Admin{% endblock %}
+{% block page_title %}Reporte de Usuarios{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Estadísticas de roles -->
+    <div class="col-lg-6 mb-4">
+        <div class="card card-dashboard">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Estadísticas de Usuarios</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h3>{{ role_stats.total_users }}</h3>
+                                <p>Total Usuarios</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h3>{{ role_stats.active_users }}</h3>
+                                <p>Usuarios Activos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h3>{{ role_stats.staff_users }}</h3>
+                                <p>Vendedores</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <h3>{{ role_stats.admin_users }}</h3>
+                                <p>Administradores</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body">
+                                <h3>{{ role_stats.superadmin_users }}</h3>
+                                <p>SuperAdmins</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usuarios por mes -->
+    <div class="col-lg-6 mb-4">
+        <div class="card card-dashboard">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Registros por Mes (Últimos 12 meses)</h5>
+            </div>
+            <div class="card-body">
+                {% if users_by_month %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Mes/Año</th>
+                                <th>Usuarios Registrados</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user_data in users_by_month %}
+                            <tr>
+                                <td>{{ user_data.month }}/{{ user_data.year }}</td>
+                                <td><span class="badge bg-primary">{{ user_data.user_count }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted">No hay datos de registros</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

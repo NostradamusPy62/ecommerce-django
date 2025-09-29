@@ -7,14 +7,49 @@
 <!-- ========================= SECTION MAIN ========================= -->
 <section class="section-intro padding-y-sm">
 <div class="container">
-
 <div class="intro-banner-wrap">
 	<img src="{% static 'images/banners/banner01.jpg' %}" class="img-fluid rounded">
 </div>
-
 </div> <!-- container //  -->
 </section>
 <!-- ========================= SECTION MAIN END// ========================= -->
+
+<!-- ========================= SECCIÓN PANEL ADMIN ========================= -->
+{% if user.is_authenticated and user.is_superadmin or user.is_admin or user.is_staff %}
+<section class="section-name padding-y-sm">
+<div class="container">
+    <div class="card bg-light border-warning">
+        <div class="card-body text-center">
+            <h3 class="text-warning">
+                {% if user.is_superadmin %}
+                👑 Acceso de SuperAdministrador
+                {% elif user.is_admin %}
+                🛡️ Acceso de Administrador
+                {% else %}
+                📊 Acceso de Vendedor
+                {% endif %}
+            </h3>
+            <p class="mb-3 text-muted">
+                {% if user.is_superadmin %}
+                Tienes control total sobre la tienda, usuarios y configuración del sistema.
+                {% elif user.is_admin %}
+                Puedes gestionar productos, categorías, pedidos y ver reportes.
+                {% else %}
+                Puedes ver pedidos, reportes de ventas y el historial de chat.
+                {% endif %}
+            </p>
+            <a href="{% url 'admin_panel:dashboard' %}" class="btn 
+                {% if user.is_superadmin %}btn-danger
+                {% elif user.is_admin %}btn-warning
+                {% else %}btn-info{% endif %} btn-lg">
+                <i class="fas fa-tachometer-alt"></i> Ir al Panel de Control
+            </a>
+        </div>
+    </div>
+</div>
+</section>
+{% endif %}
+<!-- ========================= SECCIÓN PANEL ADMIN END// ========================= -->
 
 <!-- ========================= SECTION  ========================= -->
 <section class="section-name padding-y-sm">
@@ -27,10 +62,7 @@
 
 	
 <div class="row">
-
-
 	{% for product in products %}
-
 	<div class="col-md-3">
 		<div class="card card-product-grid">
 			<a href="{{ product.get_url }}" class="img-wrap"> 
@@ -39,7 +71,6 @@
 				<a href="{{ product.get_url}}" class="title">{{product.product_name}}</a>
 				<div class="price mt-1">{{product.price}}</div> <!-- price-wrap.// -->
 				<div class="rating-start">
-
 				<span>
 					<i class="fa fa-star{% if product.averageReview < 0.5 %}-o{% elif product.averageReview >= 0.5 and product.averageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
 					<i class="fa fa-star{% if product.averageReview < 1.5 %}-o{% elif product.averageReview >= 1.5 and product.averageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
@@ -47,26 +78,15 @@
 					<i class="fa fa-star{% if product.averageReview < 3.5 %}-o{% elif product.averageReview >= 3.5 and product.averageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
 					<i class="fa fa-star{% if product.averageReview < 4.5 %}-o{% elif product.averageReview >= 4.5 and product.averageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
 				</span>
-
 				</div>
 			</figcaption>
 		</div>
 	</div> <!-- col.// -->
-
 	{% endfor %}
-
 </div> <!-- row.// -->
 
 </div><!-- container // -->
 </section>
 <!-- ========================= SECTION  END// ========================= -->
-
-
-
-</footer>
-
-
-</body>
-</html>
 
 {% endblock %}

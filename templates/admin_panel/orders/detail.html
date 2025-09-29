@@ -1,0 +1,151 @@
+{% extends 'admin_panel/base.html' %}
+{% load humanize %}
+
+{% block title %}Detalle Pedido - Panel Admin{% endblock %}
+{% block page_title %}Detalle del Pedido #{{ order.order_number }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Información del pedido -->
+        <div class="card card-dashboard mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Información del Pedido</h5>
+                <span class="badge 
+                    {% if order.status == 'Completed' %}bg-success
+                    {% elif order.status == 'Cancelled' %}bg-danger
+                    {% elif order.status == 'Accepted' %}bg-info
+                    {% else %}bg-warning{% endif %}">
+                    {{ order.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Información del Cliente</h6>
+                        <p><strong>Nombre:</strong> {{ order.full_name }}</p>
+                        <p><strong>Email:</strong> {{ order.email }}</p>
+                        <p><strong>Teléfono:</strong> {{ order.phone }}</p>
+                        {% if order.ruc %}
+                        <p><strong>RUC:</strong> {{ order.ruc }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Dirección de Envío</h6>
+                        <p>{{ order.full_address }}</p>
+                        <p>{{ order.city }}, {{ order.state }}, {{ order.country }}</p>
+                    </div>
+                </div>
+
+                {% if order.order_note %}
+                <div class="mt-3">
+                    <h6>Nota del Pedido</h6>
+                    <p class="text-muted">{{ order.order_note }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Productos del pedido -->
+        <div class="card card-dashboard">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Productos del Pedido</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order_products %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item.product.product_name }}</strong>
+                                    {% if item.variation.all %}
+                                    <br>
+                                    <small class="text-muted">
+                                        {% for variation in item.variation.all %}
+                                        {{ variation.variation_category }}: {{ variation.variation_value }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </small>
+                                    {% endif %}
+                                </td>
+                                <td>Gs. {{ item.product_price|floatformat:0|intcomma }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>Gs. {{ item.product_price|floatformat:0|intcomma }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td><strong>Gs. {{ order.order_total|floatformat:0|intcomma }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Actualizar estado -->
+        <div class="card card-dashboard mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Actualizar Estado</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'admin_panel:order_update_status' order.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <select name="status" class="form-select" required>
+                            {% for status in order.STATUS %}
+                            <option value="{{ status.0 }}" {% if order.status == status.0 %}selected{% endif %}>
+                                {{ status.1 }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sync-alt"></i> Actualizar Estado
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="card card-dashboard">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información Adicional</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Número de Pedido:</strong> #{{ order.order_number }}</p>
+                <p><strong>Fecha de Creación:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+                <p><strong>Última Actualización:</strong> {{ order.update_at|date:"d/m/Y H:i" }}</p>
+                <p><strong>IP:</strong> {{ order.ip|default:"-" }}</p>
+                
+                {% if order.payment %}
+                <div class="mt-3 p-3 bg-light rounded">
+                    <h6>Información de Pago</h6>
+                    <p class="mb-1"><strong>Método:</strong> {{ order.payment.payment_method }}</p>
+                    <p class="mb-1"><strong>Estado:</strong> {{ order.payment.status }}</p>
+                    <p class="mb-0"><strong>ID Pago:</strong> {{ order.payment.payment_id }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'admin_panel:order_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver a la Lista
+    </a>
+</div>
+{% endblock %}

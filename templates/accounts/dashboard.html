@@ -1,55 +1,91 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
-
 {% block content %}
 
-
-<!-- ========================= SECTION CONTENT ========================= -->
 <section class="section-conten padding-y bg">
-    {% include "includes/alerts.html" %}
-    <div class="container">
-        <div class="row">
 
-            {% include "includes/dashboard_sidebar.html" %}
+{% include 'includes/alerts.html' %}
+<div class="container">
+	<div class="row">
+	{% include 'includes/dashboard_sidebar.html' %}
+	<main class="col-md-9">
+		<article class="card">
+		<header class="card-header">
+			<strong class="d-inline-block mr-3">Dashboard de </strong>
+			<span>{{ user.first_name }} {{ user.last_name }}</span>
+		</header>
+		<div class="card-body">
+			<div class="row">
 
-        <main class="col-md-9">
-            <article class="card">
-            <header class="card-header">
-                <strong class="d-inline-block mr-3">Sesion iniciada de:</strong>
-                <span>{{ user.full_name }}</span>
-            </header>
-            <div class="card-body">
-                <div class="row"> 
+			<div class="col-md-6">
+				<div class="card" style="text-align:center;">
+					<div class="card-body">
+						<h5 class="card-title">Total Ordenes</h5>
+						<h4>{{ orders_count }}</h4>
+						<a href="{% url 'my_orders' %}">Ver Ordenes</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="card" style="text-align:center;">
+					<div class="card-body">
+						{% if userprofile.profile_picture %}
+						<img src="{{ userprofile.profile_picture.url }}" alt="User Profile Picture" width="50" height="50" style="border-radius:50%;">
+						{% else %}
+						<img src="{% static 'images/avatars/avatar1.jpg' %}" alt="Default Profile Picture" width="50" height="50" style="border-radius:50%;">
+						{% endif %}
+						<p class="mb-0">{{ user.email }}</p>
+						<p>{{ user.phone_number }}</p>
+					</div>
+				</div>
+			</div>
 
-                    <div class="col-md-6">
-                        <div class="card" style="text-align: center;">
-                            <div class="card-body">
-                                <h5 class="card-title">Total de Ordenes</h5>
-                                <h4>{{ orders_count }}</h4>
-                                <a href="{% url 'my_orders' %}">Ver Ordenes</a>
-                            </div>
-                        </div>
-                    </div>
+			</div> <!-- row.// -->
+		</div> <!-- card-body .// -->
 
-                    <div class="col-md-6">
-                        <div class="card" style="text-align: center;">
-                            <div class="card-body">
-                                <img src="{{ userprofile.profile_picture.url }}" alt="Imagen de perfil" width="50" height="50" style="border-radius: 50%;">
-                                <p class="mb-0">{{ user.email }}</p>
-                                <p>{{ user.phone_number }}</p>
-                            </div>
-                        </div>
-                    </div>
+		<!-- SECCIÓN PANEL ADMIN PARA ROLES ESPECIALES -->
+		{% if show_admin_panel %}
+		<div class="card-body bg-light border-warning mt-4">
+			<div class="row">
+				<div class="col-md-8">
+					<h4 class="text-warning">
+						{% if user.is_superadmin %}
+						👑 Acceso de SuperAdministrador
+						{% elif user.is_admin %}
+						🛡️ Acceso de Administrador
+						{% else %}
+						📊 Acceso de Vendedor
+						{% endif %}
+					</h4>
+					<p class="mb-0 text-muted">
+						{% if user.is_superadmin %}
+						Tienes control total sobre la tienda, usuarios y configuración del sistema.
+						{% elif user.is_admin %}
+						Puedes gestionar productos, categorías, pedidos y ver reportes.
+						{% else %}
+						Puedes ver pedidos, reportes de ventas y el historial de chat.
+						{% endif %}
+					</p>
+				</div>
+				<div class="col-md-4 text-right">
+					<a href="{% url 'admin_panel:dashboard' %}" class="btn 
+						{% if user.is_superadmin %}btn-danger
+						{% elif user.is_admin %}btn-warning
+						{% else %}btn-info{% endif %}">
+						<i class="fas fa-tachometer-alt"></i> Panel de Control
+					</a>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+		<!-- FIN SECCIÓN PANEL ADMIN -->
 
-                </div> <!-- row.// -->
-            </div> <!-- card-body .// -->
+		</article> <!-- order-group.// -->
+	</main>
+</div> <!-- row.// -->
+</div>
 
-            </article> <!-- order-group.// --> 
-        </main>
-    </div> <!-- row.// -->
-    </div>
-    
-    
-    </section>
-    <!-- ========================= SECTION CONTENT END// ========================= -->
-{% endblock  %}
+
+</section>
+
+{% endblock %}

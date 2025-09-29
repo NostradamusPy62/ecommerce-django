@@ -1,0 +1,110 @@
+{% extends 'admin_panel/base.html' %}
+{% load humanize %}
+
+{% block title %}Reporte de Productos - Panel Admin{% endblock %}
+{% block page_title %}Reporte de Productos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Productos por categoría -->
+    <div class="col-lg-6 mb-4">
+        <div class="card card-dashboard">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Productos por Categoría</h5>
+            </div>
+            <div class="card-body">
+                {% if products_by_category %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Categoría</th>
+                                <th>Productos</th>
+                                <th>Stock Total</th>
+                                <th>Precio Promedio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cat in products_by_category %}
+                            <tr>
+                                <td>{{ cat.category__category_name }}</td>
+                                <td><span class="badge bg-primary">{{ cat.product_count }}</span></td>
+                                <td><span class="badge bg-success">{{ cat.total_stock }}</span></td>
+                                <td>Gs. {{ cat.avg_price|floatformat:0|intcomma }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted">No hay datos de categorías</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos sin stock -->
+    <div class="col-lg-6 mb-4">
+        <div class="card card-dashboard">
+            <div class="card-header bg-danger text-white">
+                <h5 class="card-title mb-0">Productos Sin Stock</h5>
+            </div>
+            <div class="card-body">
+                {% if out_of_stock %}
+                <div class="list-group">
+                    {% for product in out_of_stock %}
+                    <div class="list-group-item">
+                        <strong>{{ product.product_name }}</strong>
+                        <span class="badge bg-danger float-end">Sin stock</span>
+                        <br>
+                        <small class="text-muted">{{ product.category.category_name }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-center text-muted">No hay productos sin stock</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos con bajo stock -->
+    <div class="col-lg-12 mb-4">
+        <div class="card card-dashboard">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="card-title mb-0">Productos con Bajo Stock (≤ 10 unidades)</h5>
+            </div>
+            <div class="card-body">
+                {% if low_stock %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Categoría</th>
+                                <th>Stock Actual</th>
+                                <th>Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in low_stock %}
+                            <tr>
+                                <td>{{ product.product_name }}</td>
+                                <td>{{ product.category.category_name }}</td>
+                                <td>
+                                    <span class="badge bg-warning">{{ product.stock }} unidades</span>
+                                </td>
+                                <td>Gs. {{ product.price|floatformat:0|intcomma }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted">No hay productos con bajo stock</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

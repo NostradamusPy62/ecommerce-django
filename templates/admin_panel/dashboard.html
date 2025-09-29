@@ -1,0 +1,202 @@
+{% extends 'admin_panel/base.html' %}
+{% load humanize %}
+
+{% block title %}Dashboard - Panel Admin{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Métricas principales -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card card-dashboard bg-primary text-white stat-card">
+            <div class="card-body">
+                <i class="fas fa-box"></i>
+                <h5>{{ total_products }}</h5>
+                <p>Productos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card card-dashboard bg-success text-white stat-card">
+            <div class="card-body">
+                <i class="fas fa-tags"></i>
+                <h5>{{ total_categories }}</h5>
+                <p>Categorías</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card card-dashboard bg-warning text-white stat-card">
+            <div class="card-body">
+                <i class="fas fa-shopping-cart"></i>
+                <h5>{{ total_orders }}</h5>
+                <p>Pedidos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card card-dashboard bg-danger text-white stat-card">
+            <div class="card-body">
+                <i class="fas fa-users"></i>
+                <h5>{{ total_users }}</h5>
+                <p>Usuarios</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Ventas del mes -->
+    <div class="col-lg-8 mb-4">
+        <div class="card card-dashboard">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line text-primary"></i> Ventas del Mes
+                </h5>
+            </div>
+            <div class="card-body">
+                <h2 class="text-success">Gs. {{ monthly_sales|floatformat:0|intcomma }}</h2>
+                <p class="text-muted">Total de ventas completadas este mes</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estado de pedidos -->
+    <div class="col-lg-4 mb-4">
+        <div class="card card-dashboard">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-clipboard-list text-info"></i> Estado de Pedidos
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for stat in order_status_stats %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span>{{ stat.status }}</span>
+                    <span class="badge bg-primary">{{ stat.count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Pedidos recientes -->
+    <div class="col-lg-8 mb-4">
+        <div class="card card-dashboard">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-clock text-warning"></i> Pedidos Recientes
+                </h5>
+                <a href="{% url 'admin_panel:order_list' %}" class="btn btn-sm btn-primary">Ver Todos</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th># Pedido</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'admin_panel:order_detail' order.id %}" class="text-decoration-none">
+                                        #{{ order.order_number }}
+                                    </a>
+                                </td>
+                                <td>{{ order.full_name }}</td>
+                                <td>Gs. {{ order.order_total|floatformat:0|intcomma }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if order.status == 'Completed' %}bg-success
+                                        {% elif order.status == 'Cancelled' %}bg-danger
+                                        {% else %}bg-warning{% endif %}">
+                                        {{ order.status }}
+                                    </span>
+                                </td>
+                                <td>{{ order.created_at|date:"d/m/Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No hay pedidos recientes</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos con bajo stock -->
+    <div class="col-lg-4 mb-4">
+        <div class="card card-dashboard">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-exclamation-triangle text-danger"></i> Bajo Stock
+                </h5>
+                <a href="{% url 'admin_panel:product_list' %}?stock=low" class="btn btn-sm btn-outline-danger">Ver Todos</a>
+            </div>
+            <div class="card-body">
+                {% for product in low_stock_products %}
+                <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
+                    <div>
+                        <h6 class="mb-1">{{ product.product_name }}</h6>
+                        <small class="text-muted">{{ product.category.category_name }}</small>
+                    </div>
+                    <span class="badge bg-danger">{{ product.stock }} unidades</span>
+                </div>
+                {% empty %}
+                <p class="text-center text-muted">No hay productos con bajo stock</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones rápidas -->
+{% if request.user.is_admin or request.user.is_superadmin %}
+<div class="row">
+    <div class="col-12">
+        <div class="card card-dashboard">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bolt text-success"></i> Acciones Rápidas
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'admin_panel:product_add' %}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-plus"></i> Nuevo Producto
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'admin_panel:category_add' %}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-tag"></i> Nueva Categoría
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'admin_panel:sales_report' %}" class="btn btn-outline-info w-100">
+                            <i class="fas fa-chart-bar"></i> Ver Reportes
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'admin_panel:chat_history' %}" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-comments"></i> Historial Chat
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

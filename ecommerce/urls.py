@@ -28,5 +28,6 @@ urlpatterns = [
     path('carts/', include('carts.urls')),
     path('accounts/', include('accounts.urls')),
     path('orders/', include('orders.urls')),
-    
+    path('chat/', include('chat.urls')),
+    path('admin-panel/', include('admin_panel.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

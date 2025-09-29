@@ -1,0 +1,78 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Historial de Chat - Panel Admin{% endblock %}
+{% block page_title %}Historial de Chat{% endblock %}
+
+{% block content %}
+<div class="card card-dashboard">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Historial de Conversaciones</h5>
+    </div>
+    <div class="card-body">
+        <!-- Filtros -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <form method="get" class="row g-2">
+                    <div class="col-md-8">
+                        <select name="user" class="form-select">
+                            <option value="">Todos los usuarios</option>
+                            {% for user in users %}
+                            <option value="{{ user.id }}" {% if request.GET.user == user.id|stringformat:"i" %}selected{% endif %}>
+                                {{ user.email }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-outline-primary w-100">Filtrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Historial -->
+        <div class="chat-history">
+            {% for message in chat_messages %}
+            <div class="card mb-3 {% if message.user %}border-primary{% else %}border-secondary{% endif %}">
+                <div class="card-header py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if message.user %}
+                            <strong class="text-primary">{{ message.user.email }}</strong>
+                            {% if message.user.is_superadmin %}
+                            <span class="badge bg-danger ms-1">SuperAdmin</span>
+                            {% elif message.user.is_admin %}
+                            <span class="badge bg-warning ms-1">Admin</span>
+                            {% elif message.user.is_staff %}
+                            <span class="badge bg-info ms-1">Vendedor</span>
+                            {% endif %}
+                            {% else %}
+                            <strong class="text-muted">Anónimo ({{ message.session_key }})</strong>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">{{ message.timestamp|date:"d/m/Y H:i" }}</small>
+                    </div>
+                </div>
+                <div class="card-body py-3">
+                    <div class="row">
+                        <div class="col-md-6 border-end">
+                            <p class="mb-1"><strong>Usuario:</strong></p>
+                            <p class="text-dark">{{ message.user_message }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Asistente:</strong></p>
+                            <p class="text-success">{{ message.bot_response|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4">
+                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No hay historial de chat disponible</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
