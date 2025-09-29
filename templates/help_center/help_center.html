@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Centro de Ayuda - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Centro de Ayuda</h1>
+    
+    <!-- Barra de búsqueda -->
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <form action="{% url 'help_center:search_help' %}" method="get">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="¿En qué podemos ayudarte?">
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Categorías -->
+    <div class="row">
+        {% for category in categories %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ category.name }}</h5>
+                    <p class="card-text">{{ category.description }}</p>
+                    <a href="{% url 'help_center:category_detail' category.id %}" class="btn btn-outline-primary">
+                        Ver artículos
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Artículos destacados -->
+    {% if featured_articles %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3>Artículos Destacados</h3>
+            <div class="list-group">
+                {% for article in featured_articles %}
+                <a href="{% url 'help_center:article_detail' article.slug %}" class="list-group-item list-group-item-action">
+                    {{ article.title }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

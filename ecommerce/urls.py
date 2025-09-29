@@ -30,4 +30,6 @@ urlpatterns = [
     path('orders/', include('orders.urls')),
     path('chat/', include('chat.urls')),
     path('admin-panel/', include('admin_panel.urls')),
+    path('ayuda/', include('help_center.urls')),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} - Ayuda{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'help_center:help_center' %}">Ayuda</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'help_center:category_detail' article.category.id %}">{{ article.category.name }}</a></li>
+            <li class="breadcrumb-item active">{{ article.title }}</li>
+        </ol>
+    </nav>
+
+    <article class="card">
+        <div class="card-body">
+            <h1 class="card-title">{{ article.title }}</h1>
+            <div class="text-muted mb-3">
+                <small>
+                    Categoría: {{ article.category.name }} | 
+                    Vistas: {{ article.view_count }} | 
+                    Actualizado: {{ article.updated_at|date:"d/m/Y" }}
+                </small>
+            </div>
+            
+            <div class="article-content mt-4">
+                {{ article.content|linebreaks }}
+            </div>
+        </div>
+    </article>
+    
+    <!-- Artículos relacionados -->
+    {% if related_articles %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Artículos relacionados</h5>
+        </div>
+        <div class="card-body">
+            <div class="list-group">
+                {% for related in related_articles %}
+                <a href="{% url 'help_center:article_detail' related.slug %}" class="list-group-item list-group-item-action">
+                    {{ related.title }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Navegación -->
+    <div class="mt-4 d-flex justify-content-between">
+        <a href="{% url 'help_center:category_detail' article.category.id %}" class="btn btn-outline-primary">
+            ← Volver a {{ article.category.name }}
+        </a>
+        <a href="{% url 'help_center:help_center' %}" class="btn btn-outline-secondary">
+            🏠 Centro de Ayuda
+        </a>
+    </div>
+</div>
+{% endblock %}

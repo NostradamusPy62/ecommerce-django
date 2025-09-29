@@ -91,6 +91,11 @@
                         </div>
                         {% endif %}
                         
+                        <!-- BOTÓN DE AYUDA -->
+                        <a href="{% url 'help_center:help_center' %}" class="widget-header pl-3 ml-3" title="Centro de Ayuda">
+                            <div class="icon icon-sm rounded-circle border"><i class="fa fa-question-circle"></i></div>
+                        </a>
+                        
                         <a href="{% url 'cart' %}" class="widget-header pl-3 ml-3">
                             <div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></div>
                             <span class="badge badge-pill badge-danger notify">{{ cart_count }}</span>

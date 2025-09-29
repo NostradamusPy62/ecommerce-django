@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'orders',
     'chat',
     'admin_panel',
+    'help_center',
 
 ]
 
