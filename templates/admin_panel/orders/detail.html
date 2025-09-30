@@ -1,56 +1,46 @@
 {% extends 'admin_panel/base.html' %}
 {% load humanize %}
-{% load static %}
 
-{% block title %}Detalle Pedido #{{ order.order_number }} - DavBorn Store{% endblock %}
-{% block page_title %}📦 Detalle del Pedido #{{ order.order_number }}{% endblock %}
+{% block title %}Detalle Pedido - Panel Admin{% endblock %}
+{% block page_title %}Detalle del Pedido #{{ order.order_number }}{% endblock %}
 
 {% block content %}
-<!-- Bootstrap 5 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Cyber Minimal CSS -->
-<link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
-<!-- Font Awesome -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
 <div class="row">
     <div class="col-lg-8">
         <!-- Información del pedido -->
         <div class="card card-dashboard mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">📋 Información del Pedido</h5>
-                <span class="badge fs-6 
+                <h5 class="card-title mb-0">Información del Pedido</h5>
+                <span class="badge 
                     {% if order.status == 'Completed' %}bg-success
                     {% elif order.status == 'Cancelled' %}bg-danger
                     {% elif order.status == 'Accepted' %}bg-info
-                    {% else %}bg-warning text-dark{% endif %}">
+                    {% else %}bg-warning{% endif %}">
                     {{ order.get_status_display }}
                 </span>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6 border-end border-cyber">
-                        <h6 class="text-gradient mb-3">👤 Información del Cliente</h6>
-                        <p><strong>📛 Nombre:</strong> {{ order.full_name }}</p>
-                        <p><strong>📧 Email:</strong> {{ order.email }}</p>
-                        <p><strong>📞 Teléfono:</strong> {{ order.phone }}</p>
+                    <div class="col-md-6">
+                        <h6>Información del Cliente</h6>
+                        <p><strong>Nombre:</strong> {{ order.full_name }}</p>
+                        <p><strong>Email:</strong> {{ order.email }}</p>
+                        <p><strong>Teléfono:</strong> {{ order.phone }}</p>
                         {% if order.ruc %}
-                        <p><strong>🏢 RUC:</strong> <code>{{ order.ruc }}</code></p>
+                        <p><strong>RUC:</strong> {{ order.ruc }}</p>
                         {% endif %}
                     </div>
                     <div class="col-md-6">
-                        <h6 class="text-gradient mb-3">📍 Dirección de Envío</h6>
-                        <p class="mb-2">{{ order.full_address }}</p>
-                        <p class="text-muted">{{ order.city }}, {{ order.state }}, {{ order.country }}</p>
+                        <h6>Dirección de Envío</h6>
+                        <p>{{ order.full_address }}</p>
+                        <p>{{ order.city }}, {{ order.state }}, {{ order.country }}</p>
                     </div>
                 </div>
 
                 {% if order.order_note %}
-                <div class="mt-4 pt-3 border-top">
-                    <h6 class="text-gradient">📝 Nota del Pedido</h6>
-                    <div class="glass-effect rounded p-3 mt-2">
-                        <p class="text-muted mb-0">{{ order.order_note }}</p>
-                    </div>
+                <div class="mt-3">
+                    <h6>Nota del Pedido</h6>
+                    <p class="text-muted">{{ order.order_note }}</p>
                 </div>
                 {% endif %}
             </div>
@@ -59,60 +49,43 @@
         <!-- Productos del pedido -->
         <div class="card card-dashboard">
             <div class="card-header">
-                <h5 class="card-title mb-0">🛍️ Productos del Pedido</h5>
+                <h5 class="card-title mb-0">Productos del Pedido</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table">
                         <thead>
                             <tr>
-                                <th>🖼️ Producto</th>
-                                <th>💰 Precio</th>
-                                <th>📦 Cantidad</th>
-                                <th>🧮 Subtotal</th>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for item in order_products %}
-                            <tr class="hover-lift">
+                            <tr>
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        {% if item.product.images.first %}
-                                        <img src="{{ item.product.images.first.image.url }}" 
-                                             alt="{{ item.product.product_name }}"
-                                             class="rounded me-3" 
-                                             style="width: 50px; height: 50px; object-fit: cover;">
-                                        {% else %}
-                                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center me-3" 
-                                             style="width: 50px; height: 50px;">
-                                            <i class="fas fa-image text-muted"></i>
-                                        </div>
-                                        {% endif %}
-                                        <div>
-                                            <strong class="text-white">{{ item.product.product_name }}</strong>
-                                            {% if item.variation.all %}
-                                            <br>
-                                            <small class="text-muted">
-                                                {% for variation in item.variation.all %}
-                                                {{ variation.variation_category }}: {{ variation.variation_value }}{% if not forloop.last %}, {% endif %}
-                                                {% endfor %}
-                                            </small>
-                                            {% endif %}
-                                        </div>
-                                    </div>
+                                    <strong>{{ item.product.product_name }}</strong>
+                                    {% if item.variation.all %}
+                                    <br>
+                                    <small class="text-muted">
+                                        {% for variation in item.variation.all %}
+                                        {{ variation.variation_category }}: {{ variation.variation_value }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </small>
+                                    {% endif %}
                                 </td>
-                                <td class="text-success">Gs. {{ item.product_price|floatformat:0|intcomma }}</td>
-                                <td>
-                                    <span class="badge bg-primary fs-6">{{ item.quantity }}</span>
-                                </td>
-                                <td class="text-warning">Gs. {{ item.product_price|floatformat:0|intcomma }}</td>
+                                <td>Gs. {{ item.product_price|floatformat:0|intcomma }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>Gs. {{ item.product_price|floatformat:0|intcomma }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
-                        <tfoot class="table-group-divider">
+                        <tfoot>
                             <tr>
-                                <td colspan="3" class="text-end"><strong>💰 Total:</strong></td>
-                                <td><strong class="text-success fs-5">Gs. {{ order.order_total|floatformat:0|intcomma }}</strong></td>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td><strong>Gs. {{ order.order_total|floatformat:0|intcomma }}</strong></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -125,13 +98,12 @@
         <!-- Actualizar estado -->
         <div class="card card-dashboard mb-4">
             <div class="card-header">
-                <h5 class="card-title mb-0">🔄 Actualizar Estado</h5>
+                <h5 class="card-title mb-0">Actualizar Estado</h5>
             </div>
             <div class="card-body">
                 <form method="post" action="{% url 'admin_panel:order_update_status' order.id %}">
                     {% csrf_token %}
-                    <div class="form-group mb-3">
-                        <label class="form-label">📊 Estado del Pedido</label>
+                    <div class="mb-3">
                         <select name="status" class="form-select" required>
                             {% for status in order.STATUS %}
                             <option value="{{ status.0 }}" {% if order.status == status.0 %}selected{% endif %}>
@@ -140,8 +112,8 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 btn-lg">
-                        <i class="fas fa-sync-alt me-2"></i>🔄 Actualizar Estado
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sync-alt"></i> Actualizar Estado
                     </button>
                 </form>
             </div>
@@ -150,29 +122,20 @@
         <!-- Información adicional -->
         <div class="card card-dashboard">
             <div class="card-header">
-                <h5 class="card-title mb-0">📊 Información Adicional</h5>
+                <h5 class="card-title mb-0">Información Adicional</h5>
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <strong>🔢 Número de Pedido:</strong><br>
-                    <code class="bg-dark px-2 py-1 rounded">#{{ order.order_number }}</code>
-                </div>
-                <p><strong>📅 Fecha de Creación:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
-                <p><strong>🕒 Última Actualización:</strong> {{ order.update_at|date:"d/m/Y H:i" }}</p>
-                <p><strong>🌐 IP:</strong> {{ order.ip|default:"No registrada" }}</p>
+                <p><strong>Número de Pedido:</strong> #{{ order.order_number }}</p>
+                <p><strong>Fecha de Creación:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+                <p><strong>Última Actualización:</strong> {{ order.update_at|date:"d/m/Y H:i" }}</p>
+                <p><strong>IP:</strong> {{ order.ip|default:"-" }}</p>
                 
                 {% if order.payment %}
-                <div class="mt-4 pt-3 border-top">
-                    <h6 class="text-gradient">💳 Información de Pago</h6>
-                    <div class="glass-effect rounded p-3 mt-2">
-                        <p class="mb-2"><strong>💸 Método:</strong> {{ order.payment.payment_method }}</p>
-                        <p class="mb-2"><strong>📈 Estado:</strong> 
-                            <span class="badge {% if order.payment.status == 'COMPLETED' %}bg-success{% else %}bg-warning{% endif %}">
-                                {{ order.payment.status }}
-                            </span>
-                        </p>
-                        <p class="mb-0"><strong>🔗 ID Pago:</strong> {{ order.payment.payment_id }}</p>
-                    </div>
+                <div class="mt-3 p-3 bg-light rounded">
+                    <h6>Información de Pago</h6>
+                    <p class="mb-1"><strong>Método:</strong> {{ order.payment.payment_method }}</p>
+                    <p class="mb-1"><strong>Estado:</strong> {{ order.payment.status }}</p>
+                    <p class="mb-0"><strong>ID Pago:</strong> {{ order.payment.payment_id }}</p>
                 </div>
                 {% endif %}
             </div>
@@ -180,12 +143,9 @@
     </div>
 </div>
 
-<div class="mt-4 pt-3 border-top">
-    <a href="{% url 'admin_panel:order_list' %}" class="btn btn-secondary btn-lg">
-        <i class="fas fa-arrow-left me-2"></i>↩️ Volver a la Lista
+<div class="mt-4">
+    <a href="{% url 'admin_panel:order_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver a la Lista
     </a>
 </div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

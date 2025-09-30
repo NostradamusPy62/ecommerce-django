@@ -3,260 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        /* ================= CYBER MINIMAL INVOICE STYLES ================= */
-        :root {
-            --cyber-black: #0A0A0A;
-            --cyber-white: #FFFFFF;
-            --cyber-indigo: #6366F1;
-            --cyber-emerald: #10B981;
-            --cyber-amber: #F59E0B;
-            --cyber-gray: #1F2937;
-            --cyber-gray-light: #374151;
-        }
-        
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            font-size: 12px; 
-            background: var(--cyber-black);
-            color: var(--cyber-white);
-            margin: 0;
-            padding: 20px;
-        }
-        
-        .invoice-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .invoice-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--cyber-indigo), var(--cyber-emerald));
-        }
-        
-        h2 { 
-            text-align: center; 
-            color: var(--cyber-white);
-            margin-bottom: 30px;
-            font-weight: 700;
-            position: relative;
-        }
-        
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--cyber-indigo), var(--cyber-emerald));
-            border-radius: 2px;
-        }
-        
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .client-info, .order-info {
-            flex: 1;
-        }
-        
-        .client-info h3, .order-info h3 {
-            color: var(--cyber-indigo);
-            margin-bottom: 15px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .info-item {
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .info-item strong {
-            color: var(--cyber-white);
-            min-width: 100px;
-            margin-right: 10px;
-        }
-        
-        .info-item span {
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        table {
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        th, td { 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            padding: 12px 8px; 
-            text-align: center;
-        }
-        
-        th {
-            background: linear-gradient(135deg, 
-                rgba(99, 102, 241, 0.15) 0%, 
-                rgba(16, 185, 129, 0.1) 100%);
-            color: var(--cyber-white);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 0.5px;
-        }
-        
-        td {
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .total { 
-            font-weight: bold; 
-            background: rgba(16, 185, 129, 0.1);
-        }
-        
-        .total-row {
-            background: rgba(99, 102, 241, 0.05);
-        }
-        
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 11px;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: linear-gradient(135deg, var(--cyber-indigo), #4F46E5);
-            color: white;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-        
-        @media print {
-            body { 
-                background: white !important;
-                color: black !important;
-            }
-            .invoice-container {
-                background: white !important;
-                color: black !important;
-                border: 1px solid #ddd !important;
-            }
-            th, td {
-                border-color: #ddd !important;
-                color: black !important;
-            }
-        }
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        h2 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #000; padding: 5px; text-align: center; }
+        .total { font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="invoice-container">
-        <!-- Header -->
-        <h2>🎫 FACTURA ELECTRÓNICA - DAVBORN STORE</h2>
-        
-        <!-- Client & Order Info -->
-        <div class="header-section">
-            <div class="client-info">
-                <h3>👤 INFORMACIÓN DEL CLIENTE</h3>
-                <div class="info-item">
-                    <strong>Cliente:</strong>
-                    <span>{{ order.full_name }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>RUC/CI:</strong>
-                    <span>{{ order.ruc|default:"N/A" }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>📧 Email:</strong>
-                    <span>{{ order.email }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>📞 Teléfono:</strong>
-                    <span>{{ order.phone }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>📍 Dirección:</strong>
-                    <span>{{ order.address_line_1 }} {{ order.address_line_2 }}</span>
-                </div>
-            </div>
-            
-            <div class="order-info">
-                <h3>📦 INFORMACIÓN DE LA ORDEN</h3>
-                <div class="info-item">
-                    <strong>Orden #:</strong>
-                    <span>{{ order_number }} <span class="badge">ACTIVA</span></span>
-                </div>
-                <div class="info-item">
-                    <strong>Fecha:</strong>
-                    <span>{{ order.created_at|date:"d/m/Y" }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Moneda:</strong>
-                    <span>Guaraníes (Gs.)</span>
-                </div>
-            </div>
-        </div>
+    <h2>Factura - Pedido #{{ order_number }}</h2>
+    <p><strong>Cliente:</strong> {{ order.full_name }}</p>
+    <p><strong>RUC/CI:</strong> {{ order.ruc|default:"N/A" }}</p>
+    <p><strong>Email:</strong> {{ order.email }}</p>
+    <p><strong>Teléfono:</strong> {{ order.phone }}</p>
+    <p><strong>Dirección:</strong> {{ order.address_line_1 }} {{ order.address_line_2 }}</p>
 
-        <!-- Products Table -->
-        <table>
-            <thead>
-                <tr>
-                    <th>🛒 Producto</th>
-                    <th>📊 Cantidad</th>
-                    <th>💰 Precio Unitario</th>
-                    <th>💵 Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in items %}
-                <tr>
-                    <td>{{ item.product_name }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.price|intcomma }} Gs.</td>
-                    <td>{{ item.subtotal|intcomma }} Gs.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr class="total-row">
-                    <td colspan="3" class="total">🚀 TOTAL GENERAL</td>
-                    <td class="total">{{ order.order_total|intcomma }} Gs.</td>
-                </tr>
-            </tfoot>
-        </table>
-
-        <!-- Footer -->
-        <div class="footer">
-            <p>¡Gracias por su compra! 🎉 | DavBorn Store - E-commerce Cyber Minimal</p>
-            <p>📧 support@davborn.com | 📞 +595 984 538502</p>
-        </div>
-    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }} Gs.</td>
+                <td>{{ item.subtotal }} Gs.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="total">Total General</td>
+                <td class="total">{{ order.order_total }} Gs.</td>
+            </tr>
+        </tfoot>
+    </table>
 </body>
 </html>

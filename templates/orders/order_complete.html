@@ -4,197 +4,110 @@
 {% load humanize %}
 
 {% block content %}
-<div class="cyber-bg">
-    <div class="container padding-y">
-        <!-- Success Header -->
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card glass-effect hover-lift text-center mb-5">
-                    <div class="card-body py-5">
-                        <div class="success-icon mb-4">
-                            <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
-                        </div>
-                        <h1 class="text-gradient mb-3">🎉 ¡Pago Completado Exitosamente!</h1>
-                        <p class="lead mb-4">
-                            Hemos enviado los detalles de tu pedido a tu correo electrónico. 
-                            Revisa tu bandeja de entrada.
-                        </p>
-                        
-                        <div class="order-number-box glass-effect p-3 d-inline-block">
-                            <strong class="h5 text-primary">📦 Número de Orden:</strong>
-                            <span class="h5 ms-2">{{ order_number }}</span>
-                        </div>
-                    </div>
+<div class="container" style="margin: 50px auto; max-width: 900px;">
+    <!-- Icono de éxito -->
+    <center>
+        <i class="fas fa-check-circle" style="font-size: 72px; margin-bottom: 20px; color: #28A745;"></i>
+    </center>
+    <h2 class="text-center">¡Tu pago se realizó con éxito!</h2>
+    <p class="text-center">
+        En breve recibirás un correo con los detalles de tu pedido.
+    </p>
+    <div class="text-center mb-4">
+        <strong>Número de orden:</strong> {{ order_number }}
+    </div>
+
+    <!-- Panel de factura -->
+    <div class="container" style="padding: 30px; background: #f9f9f9; border-radius: 8px; margin-top: 30px;">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="invoice-logo">
+                    <img src="{% static 'images/logo01.png' %}" alt="Invoice logo" style="max-height: 40px;">
                 </div>
-
-                <!-- Invoice Panel -->
-                <div class="card glass-effect">
-                    <div class="card-header bg-transparent border-bottom">
-                        <h4 class="text-gradient mb-0">🧾 Factura de Compra</h4>
-                    </div>
-                    <div class="card-body">
-                        <!-- Invoice Header -->
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="brand-logo mb-3">
-                                    <img src="{% static 'images/logo01.png' %}" alt="DavBorn Store" class="logo" height="40">
-                                </div>
-                                <h6 class="text-muted">🛒 DavBorn Store</h6>
-                                <p class="small text-muted mb-0">E-commerce Cyber Minimal</p>
-                            </div>
-                            <div class="col-md-6 text-md-end">
-                                <div class="invoice-from">
-                                    <h6 class="text-primary mb-3">👤 Facturado a:</h6>
-                                    <ul class="list-unstyled">
-                                        <li class="mb-1"><strong>{{ order.full_name }}</strong></li>
-                                        <li class="mb-1 text-muted">{{ order.full_address }}</li>
-                                        <li class="mb-1 text-muted">{{ order.city }}, {{ order.state }}, {{ order.country }}</li>
-                                        <li class="mb-1 text-muted">📞 {{ order.phone }}</li>
-                                        <li class="mb-1 text-muted">🏷️ <strong>RUC:</strong> {{ order.ruc }}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Order Details -->
-                        <div class="order-details glass-effect p-3 mb-4">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <strong>📋 Orden:</strong><br>
-                                    <span class="text-primary">#{{ order_number }}</span>
-                                </div>
-                                <div class="col-md-3">
-                                    <strong>💳 Transacción:</strong><br>
-                                    <span class="text-muted">{{ transID }}</span>
-                                </div>
-                                <div class="col-md-3">
-                                    <strong>📅 Fecha:</strong><br>
-                                    <span class="text-muted">{{ order.created_at|date:"l, F d, Y" }}</span>
-                                </div>
-                                <div class="col-md-3">
-                                    <strong>✅ Estado:</strong><br>
-                                    <span class="badge bg-success">{{ payment.status }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Order Items -->
-                        <div class="invoice-items">
-                            <h6 class="text-primary mb-3">🛍️ Productos Comprados</h6>
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead class="table-dark">
-                                        <tr>
-                                            <th class="text-center">Descripción</th>
-                                            <th class="text-center">Cantidad</th>
-                                            <th class="text-center">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for item in order.orderproduct_set.all %}
-                                        <tr class="hover-lift">
-                                            <td>
-                                                <strong>{{ item.product.product_name }}</strong>
-                                                {% if item.variation.all %}
-                                                    <div class="variations mt-1">
-                                                    {% for i in item.variation.all %}
-                                                        <small class="badge bg-outline-primary">
-                                                            {{ i.variation_category|capfirst }}: {{ i.variation_value|capfirst }}
-                                                        </small>
-                                                    {% endfor %}
-                                                    </div>
-                                                {% endif %}
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="badge bg-primary rounded-pill">{{ item.quantity }}</span>
-                                            </td>
-                                            <td class="text-center text-success fw-bold">
-                                                {{ item.product_price|intcomma }} Gs.
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                    <tfoot class="table-active">
-                                        <tr>
-                                            <th colspan="2" class="text-end">Sub Total:</th>
-                                            <th class="text-center text-primary">{{ order.order_total|intcomma }} Gs.</th>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2" class="text-end">IVA (10%):</th>
-                                            <th class="text-center text-warning">{{ order.tax|intcomma }} Gs.</th>
-                                        </tr>
-                                        <tr class="total-row">
-                                            <th colspan="2" class="text-end">🚀 Total General:</th>
-                                            <th class="text-center text-success">{{ order.order_total|intcomma }} Gs.</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="text-center mt-4">
-                            <div class="d-flex gap-3 justify-content-center flex-wrap">
-                                <a href="{% url 'generate_invoice_pdf' order_number=order_number %}" 
-                                   target="_blank" 
-                                   class="btn btn-primary hover-lift">
-                                    <i class="fas fa-file-pdf me-2"></i>📄 Descargar Factura PDF
-                                </a>
-                                <a href="{% url 'store' %}" class="btn btn-success hover-lift">
-                                    <i class="fas fa-shopping-bag me-2"></i>🛒 Seguir Comprando
-                                </a>
-                                <a href="{% url 'dashboard' %}" class="btn btn-outline-primary hover-lift">
-                                    <i class="fas fa-tachometer-alt me-2"></i>📊 Ir al Dashboard
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Thank You Message -->
-                        <div class="text-center mt-4 pt-3 border-top">
-                            <p class="text-muted mb-2">¡Gracias por confiar en DavBorn Store! 🎊</p>
-                            <small class="text-muted">Tu satisfacción es nuestra prioridad</small>
-                        </div>
-                    </div>
+            </div>
+            <div class="col-lg-6 text-right">
+                <div class="invoice-from">
+                    <ul class="list-unstyled">
+                        <li><strong>Factura a nombre de:</strong></li>
+                        <li>{{ order.full_name }}</li>
+                        <li>{{ order.full_address }}</li>
+                        <li>{{ order.city }}, {{ order.state }}, {{ order.country }}</li>
+                        <li>{{ order.phone }}</li>
+                        <li><strong>RUC:</strong> {{ order.ruc }}</li>
+                    </ul>
                 </div>
             </div>
         </div>
+
+        <!-- Detalles de la orden -->
+        <div class="invoice-details mt-4">
+            <div class="well" style="padding: 15px; background: #fff; border: 1px solid #ddd;">
+                <ul class="list-unstyled mb-0">
+                    <li><strong>Orden:</strong> # {{ order_number }}</li>
+                    <li><strong>Transacción:</strong> {{ transID }}</li>
+                    <li><strong>Fecha de Orden:</strong> {{ order.created_at|date:"l, F d, Y" }}</li>
+                    <li><strong>Estado:</strong> {{ payment.status }} </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Items de la orden -->
+        <div class="invoice-items mt-4">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Descripción</th>
+                            <th class="text-center">Cantidad</th>
+                            <th class="text-center">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.orderproduct_set.all %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.product.product_name }}</strong>
+                                {% if item.variation.all %}
+                                    <p class="text-muted small mb-0">
+                                    {% for i in item.variation.all %}
+                                        {{ i.variation_category|capfirst }}: {{ i.variation_value|capfirst }}<br>
+                                    {% endfor %}
+                                    </p>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-center">{{ item.product_price|intcomma }} Gs.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="2" class="text-right">Sub Total:</th>
+                            <th class="text-center">{{ order.order_total|intcomma }} Gs.</th>
+                        </tr>
+                        <tr>
+                            <th colspan="2" class="text-right">IVA (10%):</th>
+                            <th class="text-center">{{ order.tax|intcomma }} Gs.</th>
+                        </tr>
+                        <tr>
+                            <th colspan="2" class="text-right">Total General:</th>
+                            <th class="text-center">{{ order.order_total|intcomma }} Gs.</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Botón PDF -->
+        <div class="text-center mt-4">
+            <a href="{% url 'generate_invoice_pdf' order_number=order_number %}" target="_blank" class="btn btn-primary">Ver Factura PDF</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="invoice-footer mt-3 text-center">
+            <p>¡Gracias por comprar con nosotros!</p>
+            <a href="{% url 'store' %}" class="btn btn-success mt-2">Seguir comprando</a>
+        </div>
     </div>
 </div>
-
-<style>
-.success-icon {
-    animation: bounceIn 1s ease-out;
-}
-
-.order-number-box {
-    border-left: 4px solid var(--cyber-emerald);
-}
-
-.variations .badge {
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid var(--cyber-indigo);
-    color: var(--cyber-indigo);
-    margin-right: 5px;
-    margin-bottom: 5px;
-}
-
-.total-row {
-    background: linear-gradient(135deg, 
-        rgba(16, 185, 129, 0.1) 0%, 
-        rgba(99, 102, 241, 0.05) 100%);
-}
-
-@keyframes bounceIn {
-    0% { transform: scale(0.3); opacity: 0; }
-    50% { transform: scale(1.05); }
-    70% { transform: scale(0.9); }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-.bg-outline-primary {
-    background: transparent !important;
-    border: 1px solid var(--cyber-indigo) !important;
-    color: var(--cyber-indigo) !important;
-}
-</style>
 {% endblock %}

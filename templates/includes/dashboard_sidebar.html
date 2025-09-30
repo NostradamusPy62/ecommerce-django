@@ -1,42 +1,12 @@
-<aside class="col-md-3 mb-4">
-    <!-- SIDEBAR CYBER MINIMAL -->
-    <div class="dashboard-sidebar glass-effect hover-lift">
-        <div class="sidebar-header text-center mb-4">
-            <h6 class="text-gradient mb-0">🎛️ PANEL DE CONTROL</h6>
-            <div class="cyber-divider mt-2"></div>
-        </div>
-        
-        <nav class="nav flex-column">
-            <a class="nav-link {% if '/accounts/' == request.path %}active{% endif %} hover-lift" href="{% url 'dashboard' %}">
-                <i class="fas fa-tachometer-alt me-2"></i>📊 Dashboard
-            </a>
-            <a class="nav-link {% if '/my_orders/' in request.path %}active{% endif %} hover-lift" href="{% url 'my_orders' %}">
-                <i class="fas fa-shopping-bag me-2"></i>📦 Mis Órdenes
-            </a>
-            <a class="nav-link {% if '/edit_profile/' in request.path %}active{% endif %} hover-lift" href="{% url 'edit_profile' %}">
-                <i class="fas fa-user-edit me-2"></i>👤 Editar Perfil
-            </a>
-            <a class="nav-link {% if '/change_password/' in request.path %}active{% endif %} hover-lift" href="{% url 'change_password' %}">
-                <i class="fas fa-lock me-2"></i>🔒 Cambiar Contraseña
-            </a>
-        </nav>
-        
-        <div class="cyber-divider my-4"></div>
-        
-        <a class="btn btn-outline-danger btn-block hover-lift" href="{% url 'logout' %}">
-            <i class="fas fa-power-off me-2"></i>🚪 Salir de Sesión
-        </a>
-    </div>
-    <!-- SIDEBAR .//END -->
-</aside>
-
-<style>
-.cyber-divider {
-    height: 1px;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        var(--cyber-indigo) 50%, 
-        transparent 100%);
-    margin: 1rem 0;
-}
-</style>
+        <aside class="col-md-3">
+            <!--   SIDEBAR   -->
+            <ul class="list-group">
+                <a class="list-group-item {% if '/accounts/' == request.path %} active {% endif %}" href="{% url 'dashboard' %}"> Dashboard </a>
+                <a class="list-group-item {% if '/my_orders/' in request.path %} active {% endif %}" href="{% url 'my_orders' %}"> Mis Ordenes </a>
+                <a class="list-group-item {% if '/edit_profile/' in request.path %} active {% endif %}" href="{% url 'edit_profile' %}"> Editar Perfil </a>
+                <a class="list-group-item {% if '/change_password/' in request.path %} active {% endif %}" href="{% url 'change_password' %}"> Cambiar Contraseña </a>
+            </ul>
+            <br>
+            <a class="btn btn-light btn-block" href="{% url 'logout' %}"> <i class="fa fa-power-off"></i> <span class="text">Salir de sesion</span> </a> 
+            <!--   SIDEBAR .//END   -->
+        </aside>

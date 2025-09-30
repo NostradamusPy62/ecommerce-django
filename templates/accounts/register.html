@@ -4,392 +4,63 @@
 
 {% block content %}
 
-<!-- ========================= SECTION CONTENT CYBER ========================= -->
-<section class="section-content padding-y cyber-auth-section">
-    <div class="container">
-        <!-- ============================ COMPONENT REGISTER CYBER ================================= -->
-        <div class="cyber-auth-container">
-            <div class="cyber-auth-card glass-effect reveal-up">
-                <article class="card-body cyber-auth-card-body">
-                    <div class="cyber-auth-header text-center mb-4">
-                        <div class="cyber-auth-icon mb-3">
-                            <i class="fas fa-user-plus fa-2x text-gradient"></i>
-                        </div>
-                        <h4 class="cyber-auth-title">🚀 Crear Cuenta</h4>
-                        <p class="cyber-auth-subtitle">Únete a la comunidad DavBorn Store</p>
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+
+    <!-- ============================ COMPONENT REGISTER   ================================= -->
+        <div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+          <article class="card-body">
+            {% include "includes/alerts.html" %}
+            <header class="mb-4"><h4 class="card-title">Registro de Usuario</h4></header>
+            <form action="{% url 'register' %}" method="POST">
+                 {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label>Nombre</label>
+                              {{ form.first_name }}
+                        </div> <!-- form-group end.// -->
+                        <div class="col form-group">
+                            <label>Apellido</label>
+                              {{ form.last_name }}
+                        </div> <!-- form-group end.// -->
+                    </div> <!-- form-row end.// -->
+
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label>Numero Telefonico</label>
+                              {{ form.phone_number }}
+                        </div> <!-- form-group end.// -->
+                        <div class="col form-group">
+                            <label>Email</label>
+                              {{ form.email }}
+                        </div> <!-- form-group end.// -->
+                    </div> <!-- form-row end.// -->
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Crear password</label>
+                            {{ form.password }}
+                        </div> <!-- form-group end.// --> 
+                        <div class="form-group col-md-6">
+                            <label>Repetir password</label>
+                            {{ form.confirm_password }}
+                        </div> <!-- form-group end.// -->  
                     </div>
-                    
-                    {% include "includes/alerts.html" %}
-                    
-                    <form action="{% url 'register' %}" method="POST" class="cyber-auth-form">
-                        {% csrf_token %}
-                        
-                        <div class="form-row cyber-form-row">
-                            <div class="col form-group cyber-form-group">
-                                <label class="cyber-form-label">👤 Nombre</label>
-                                <div class="cyber-input-group">
-                                    <i class="fas fa-user cyber-input-icon"></i>
-                                    {{ form.first_name }}
-                                </div>
-                            </div>
-                            
-                            <div class="col form-group cyber-form-group">
-                                <label class="cyber-form-label">👥 Apellido</label>
-                                <div class="cyber-input-group">
-                                    <i class="fas fa-users cyber-input-icon"></i>
-                                    {{ form.last_name }}
-                                </div>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block"> Registrar  </button>
+                    </div> <!-- form-group// -->      
+                    {{ form.email.errors }}
+                    {{ form.non_field_errors }}
 
-                        <div class="form-row cyber-form-row">
-                            <div class="col form-group cyber-form-group">
-                                <label class="cyber-form-label">📞 Teléfono</label>
-                                <div class="cyber-input-group">
-                                    <i class="fas fa-phone cyber-input-icon"></i>
-                                    {{ form.phone_number }}
-                                </div>
-                            </div>
-                            
-                            <div class="col form-group cyber-form-group">
-                                <label class="cyber-form-label">📧 Email</label>
-                                <div class="cyber-input-group">
-                                    <i class="fas fa-envelope cyber-input-icon"></i>
-                                    {{ form.email }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-row cyber-form-row">
-                            <div class="form-group col-md-6 cyber-form-group">
-                                <label class="cyber-form-label">🔒 Contraseña</label>
-                                <div class="cyber-input-group">
-                                    <i class="fas fa-lock cyber-input-icon"></i>
-                                    {{ form.password }}
-                                </div>
-                            </div>
-                            
-                            <div class="form-group col-md-6 cyber-form-group">
-                                <label class="cyber-form-label">✅ Confirmar Contraseña</label>
-                                <div class="cyber-input-group">
-                                    <i class="fas fa-lock cyber-input-icon"></i>
-                                    {{ form.confirm_password }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group cyber-form-group">
-                            <div class="cyber-form-check">
-                                <input type="checkbox" class="cyber-checkbox" id="terms" required>
-                                <label class="cyber-checkbox-label" for="terms">
-                                    Acepto los <a href="#" class="cyber-terms-link">términos y condiciones</a>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group cyber-form-group">
-                            <button type="submit" class="btn btn-primary btn-block cyber-auth-btn">
-                                <i class="fas fa-user-plus me-2"></i> Crear Cuenta
-                            </button>
-                        </div>
-                        
-                        <!-- Form Errors -->
-                        {% if form.email.errors %}
-                        <div class="cyber-form-errors">
-                            {% for error in form.email.errors %}
-                            <div class="cyber-error-message">
-                                <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                        
-                        {% if form.non_field_errors %}
-                        <div class="cyber-form-errors">
-                            {% for error in form.non_field_errors %}
-                            <div class="cyber-error-message">
-                                <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                    </form>
-
-                    <div class="cyber-auth-divider">
-                        <span>¿Ya tienes cuenta?</span>
-                    </div>
-
-                    <div class="text-center">
-                        <p class="cyber-auth-footer">
-                            ¿Ya tienes una cuenta? 
-                            <a href="{% url 'login' %}" class="cyber-auth-link">Inicia Sesión</a>
-                        </p>
-                    </div>
-                </article>
-            </div>
-        </div>
-        <!-- ============================ COMPONENT REGISTER END.// ================================= -->
-    </div>
-</section>
-
-<style>
-/* Register Specific Styles */
-.cyber-auth-section {
-    background: linear-gradient(135deg, rgba(10, 10, 10, 0.9), rgba(99, 102, 241, 0.1));
-    padding: 4rem 0;
-}
-
-.cyber-auth-container {
-    max-width: 520px;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.cyber-auth-card {
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    box-shadow: var(--shadow-cyber);
-    overflow: hidden;
-}
-
-.cyber-auth-card-body {
-    padding: 2.5rem;
-}
-
-.cyber-auth-header {
-    margin-bottom: 2rem;
-}
-
-.cyber-auth-icon {
-    width: 80px;
-    height: 80px;
-    background: rgba(99, 102, 241, 0.1);
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1rem;
-}
-
-.cyber-auth-title {
-    color: var(--cyber-white);
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-.cyber-auth-subtitle {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.95rem;
-}
-
-/* Form Styles */
-.cyber-auth-form {
-    margin-top: 2rem;
-}
-
-.cyber-form-row {
-    margin: 0 -0.5rem;
-}
-
-.cyber-form-group {
-    margin-bottom: 1.5rem;
-    padding: 0 0.5rem;
-}
-
-.cyber-form-label {
-    color: var(--cyber-white);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    display: block;
-    font-size: 0.9rem;
-}
-
-.cyber-input-group {
-    position: relative;
-}
-
-.cyber-input-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.5);
-    z-index: 2;
-}
-
-/* Django Form Field Styling */
-.cyber-input-group input {
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: var(--cyber-white);
-    padding: 0.75rem 1rem 0.75rem 3rem;
-    transition: all 0.3s ease;
-    width: 100%;
-    font-size: 0.95rem;
-}
-
-.cyber-input-group input:focus {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--cyber-indigo);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-    color: var(--cyber-white);
-    outline: none;
-}
-
-.cyber-input-group input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-/* Terms Checkbox */
-.cyber-form-check {
-    display: flex;
-    align-items: center;
-    margin-top: 1rem;
-}
-
-.cyber-checkbox {
-    margin-right: 0.75rem;
-    width: 18px;
-    height: 18px;
-    accent-color: var(--cyber-indigo);
-    flex-shrink: 0;
-}
-
-.cyber-checkbox-label {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-    cursor: pointer;
-    line-height: 1.4;
-}
-
-.cyber-terms-link {
-    color: var(--cyber-indigo);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s ease;
-}
-
-.cyber-terms-link:hover {
-    color: var(--cyber-emerald);
-    text-decoration: underline;
-}
-
-/* Auth Button */
-.cyber-auth-btn {
-    border-radius: 12px;
-    padding: 0.875rem 2rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-    border: none;
-    background: linear-gradient(135deg, var(--cyber-indigo), #4F46E5);
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-    margin-top: 1rem;
-}
-
-.cyber-auth-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-}
-
-/* Form Errors */
-.cyber-form-errors {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: 10px;
-}
-
-.cyber-error-message {
-    color: #EF4444;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-}
-
-.cyber-error-message:last-child {
-    margin-bottom: 0;
-}
-
-/* Divider */
-.cyber-auth-divider {
-    text-align: center;
-    margin: 2rem 0;
-    position: relative;
-}
-
-.cyber-auth-divider::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.cyber-auth-divider span {
-    background: var(--glass-bg);
-    padding: 0 1rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9rem;
-}
-
-/* Footer Links */
-.cyber-auth-footer {
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
-    font-size: 0.95rem;
-}
-
-.cyber-auth-link {
-    color: var(--cyber-indigo);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s ease;
-}
-
-.cyber-auth-link:hover {
-    color: var(--cyber-emerald);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .cyber-auth-card-body {
-        padding: 2rem 1.5rem;
-    }
+                </form>
+            </article><!-- card-body.// -->
+        </div> <!-- card .// -->
+        <p class="text-center mt-4">Tienes una cuenta? <a href="">Log In</a></p>
+        <br><br>
+    <!-- ============================ COMPONENT REGISTER  END.// ================================= -->
     
-    .cyber-form-row {
-        margin: 0;
-    }
     
-    .cyber-form-group {
-        padding: 0;
-    }
-    
-    .cyber-auth-section {
-        padding: 2rem 0;
-    }
-}
+    </section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
 
-@media (max-width: 576px) {
-    .cyber-auth-container {
-        margin: 0 1rem;
-    }
-    
-    .cyber-auth-card-body {
-        padding: 1.5rem;
-    }
-    
-    .cyber-auth-title {
-        font-size: 1.5rem;
-    }
-}
-</style>
 {% endblock %}

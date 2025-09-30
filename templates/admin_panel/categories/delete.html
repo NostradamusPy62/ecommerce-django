@@ -1,62 +1,49 @@
 {% extends 'admin_panel/base.html' %}
-{% load static %}
 
-{% block title %}Eliminar Categoría - DavBorn Store{% endblock %}
-{% block page_title %}🗑️ Eliminar Categoría{% endblock %}
+{% block title %}Eliminar Categoría - Panel Admin{% endblock %}
+{% block page_title %}Eliminar Categoría{% endblock %}
 
 {% block content %}
-<!-- Bootstrap 5 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Cyber Minimal CSS -->
-<link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
-<!-- Font Awesome -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
 <div class="row justify-content-center">
-    <div class="col-lg-8">
+    <div class="col-lg-6">
         <div class="card card-dashboard">
             <div class="card-header bg-danger text-white">
                 <h5 class="card-title mb-0">
-                    <i class="fas fa-exclamation-triangle me-2"></i>⚠️ Confirmar Eliminación
+                    <i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación
                 </h5>
             </div>
             <div class="card-body text-center">
                 <div class="mb-4">
-                    <div class="cyber-glow mb-3">
-                        <i class="fas fa-trash-alt fa-4x text-danger"></i>
-                    </div>
-                    <h4 class="text-white">¿Estás seguro de eliminar esta categoría?</h4>
-                    <p class="text-muted">Esta acción es permanente y no se puede deshacer.</p>
+                    <i class="fas fa-trash-alt fa-4x text-danger mb-3"></i>
+                    <h4>¿Estás seguro de eliminar esta categoría?</h4>
+                    <p class="text-muted">Esta acción no se puede deshacer.</p>
                 </div>
 
-                <div class="card glass-effect mb-4">
+                <div class="card mb-4">
                     <div class="card-body">
-                        <h5 class="text-gradient">{{ category.category_name }}</h5>
+                        <h5>{{ category.category_name }}</h5>
                         <p class="text-muted mb-2">{{ category.description|default:"Sin descripción" }}</p>
-                        <p class="mb-1"><strong>🔗 Slug:</strong> <code>{{ category.slug }}</code></p>
-                        <p class="mb-0"><strong>📦 Productos asociados:</strong> 
-                            <span class="badge bg-primary">{{ category.product_set.count }}</span>
-                        </p>
+                        <p class="mb-0"><strong>Slug:</strong> {{ category.slug }}</p>
+                        <p class="mb-0"><strong>Productos en esta categoría:</strong> {{ category.product_set.count }}</p>
                     </div>
                 </div>
 
                 {% if category.product_set.count > 0 %}
-                <div class="alert alert-warning glass-effect">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>¡Atención!</strong> Esta categoría tiene 
-                    <span class="badge bg-warning text-dark">{{ category.product_set.count }}</span> 
-                    productos. Si la eliminas, estos productos quedarán sin categoría asignada.
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Advertencia:</strong> Esta categoría tiene {{ category.product_set.count }} productos. 
+                    Si la eliminas, estos productos quedarán sin categoría.
                 </div>
                 {% endif %}
 
                 <form method="post">
                     {% csrf_token %}
-                    <div class="d-flex justify-content-center gap-3 mt-4">
-                        <a href="{% url 'admin_panel:category_list' %}" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-times me-2"></i>❌ Cancelar
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'admin_panel:category_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
                         </a>
-                        <button type="submit" class="btn btn-danger btn-lg">
-                            <i class="fas fa-trash me-2"></i>✅ Sí, Eliminar Categoría
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Sí, Eliminar Categoría
                         </button>
                     </div>
                 </form>
@@ -64,7 +51,4 @@
         </div>
     </div>
 </div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

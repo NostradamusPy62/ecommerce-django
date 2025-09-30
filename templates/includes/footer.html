@@ -1,112 +1,19 @@
+
 <footer class="section-footer border-top">
-    <div class="container">
-        <!-- Main Footer Content -->
-        <section class="footer-main py-5">
-            <div class="row">
-                <!-- Company Info -->
-                <div class="col-lg-4 col-md-6 mb-4 reveal-up">
-                    <div class="footer-widget">
-                        <h5 class="title text-gradient mb-3">🚀 DavBorn Store</h5>
-                        <p class="text-muted mb-3">
-                            Tu e-commerce de confianza con diseño Cyber Minimal. 
-                            Tecnología y estilo en cada compra.
-                        </p>
-                        <div class="social-links">
-                            <a href="#" class="cyber-social-link me-2" title="Facebook">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="#" class="cyber-social-link me-2" title="Twitter">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="#" class="cyber-social-link me-2" title="Instagram">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a href="#" class="cyber-social-link" title="LinkedIn">
-                                <i class="fab fa-linkedin-in"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Links -->
-                <div class="col-lg-2 col-md-6 mb-4 reveal-up" data-delay="100">
-                    <div class="footer-widget">
-                        <h6 class="title mb-3">Enlaces Rápidos</h6>
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><a href="{% url 'home' %}" class="footer-link">🏠 Inicio</a></li>
-                            <li class="mb-2"><a href="{% url 'store' %}" class="footer-link">🛒 Tienda</a></li>
-                            <li class="mb-2"><a href="{% url 'cart' %}" class="footer-link">🛍️ Carrito</a></li>
-                            <li class="mb-2"><a href="#" class="footer-link">❓ Ayuda</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Categories -->
-                <div class="col-lg-3 col-md-6 mb-4 reveal-up" data-delay="200">
-                    <div class="footer-widget">
-                        <h6 class="title mb-3">📂 Categorías</h6>
-                        <ul class="list-unstyled">
-                            {% for category in links|slice:":5" %}
-                            <li class="mb-2">
-                                <a href="{{ category.get_url }}" class="footer-link">
-                                    {{ category.category_name }}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Contact Info -->
-                <div class="col-lg-3 col-md-6 mb-4 reveal-up" data-delay="300">
-                    <div class="footer-widget">
-                        <h6 class="title mb-3">📞 Contacto</h6>
-                        <div class="contact-info">
-                            <div class="contact-item mb-3">
-                                <i class="fas fa-envelope text-primary me-2"></i>
-                                <span class="text-muted">support@davborn.com</span>
-                            </div>
-                            <div class="contact-item mb-3">
-                                <i class="fas fa-phone text-primary me-2"></i>
-                                <span class="text-muted">+595 984 538502</span>
-                            </div>
-                            <div class="contact-item mb-3">
-                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                <span class="text-muted">Ciudad del Este, Paraguay</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer Bottom -->
-        <section class="footer-bottom border-top pt-4 reveal-up">
-            <div class="row align-items-center">
-                <div class="col-md-4 mb-3 mb-md-0">
-                    <p class="text-muted mb-0"> 
-                        <i class="fas fa-copyright me-1"></i> 
-                        <span class="text-gradient">DavBorn Store</span> {{ now|date:"Y" }}
-                    </p>
-                </div>
-                
-                <div class="col-md-4 text-center mb-3 mb-md-0">
-                    <div class="payment-methods">
-                        <span class="text-muted me-3">💳 Métodos de pago:</span>
-                        <i class="fab fa-cc-visa text-muted me-2 cyber-payment-icon"></i>
-                        <i class="fab fa-cc-paypal text-muted me-2 cyber-payment-icon"></i>
-                        <i class="fab fa-cc-mastercard text-muted me-2 cyber-payment-icon"></i>
-                        <i class="fab fa-cc-apple-pay text-muted cyber-payment-icon"></i>
-                    </div>
-                </div>
-                
-                <div class="col-md-4 text-md-end">
-                    <div class="security-badges">
-                        <span class="badge bg-primary me-2">🔒 SSL Secure</span>
-                        <span class="badge bg-success">⭐ Trusted</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-</footer>
+	<div class="container">
+		<section class="footer-bottom border-top row">
+			<div class="col-md-2">
+				<p class="text-muted"> &copy VaxiDrez </p>
+			</div>
+			<div class="col-md-8 text-md-center">
+				<span  class="px-2">vaxi.drez.social@gmail.com</span>
+				<span  class="px-2">+1980-986-7233</span>
+				<span  class="px-2">698 Park ST, US</span>
+			</div>
+			<div class="col-md-2 text-md-right text-muted">
+				<i class="fab fa-lg fa-cc-visa"></i>
+				<i class="fab fa-lg fa-cc-paypal"></i>
+				<i class="fab fa-lg fa-cc-mastercard"></i>
+			</div>
+		</section>
+	</div>

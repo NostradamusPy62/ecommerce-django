@@ -1,52 +1,27 @@
 {% extends 'base.html' %}
-{% load static %}
 
-{% block title %}❓ Preguntas Frecuentes - Ayuda - DavBorn Store{% endblock %}
+{% block title %}Preguntas Frecuentes - Ayuda{% endblock %}
 
 {% block content %}
-<!-- Bootstrap 5 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Cyber Minimal CSS -->
-<link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
-<!-- Font Awesome -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
-<div class="container mt-4 cyber-bg" style="min-height: 100vh;">
+<div class="container mt-4">
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb glass-effect px-3 py-2 rounded">
-            <li class="breadcrumb-item">
-                <a href="{% url 'help_center:help_center' %}" class="text-decoration-none">
-                    <i class="fas fa-home me-1"></i>🏠 Ayuda
-                </a>
-            </li>
-            <li class="breadcrumb-item active text-white">❓ Preguntas Frecuentes</li>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'help_center:help_center' %}">Ayuda</a></li>
+            <li class="breadcrumb-item active">Preguntas Frecuentes</li>
         </ol>
     </nav>
 
-    <div class="card card-dashboard mb-4">
-        <div class="card-body text-center">
-            <h1 class="text-gradient mb-3">❓ Preguntas Frecuentes (FAQ)</h1>
-            <p class="lead text-muted">Encuentra respuestas rápidas a las preguntas más comunes</p>
-        </div>
-    </div>
+    <h1 class="mb-4">Preguntas Frecuentes (FAQ)</h1>
     
     <!-- Búsqueda en FAQ -->
     <div class="row mb-4">
-        <div class="col-md-8 mx-auto">
-            <div class="card card-dashboard">
-                <div class="card-body">
-                    <form method="get" action="{% url 'help_center:search_help' %}">
-                        <div class="input-group input-group-lg">
-                            <input type="text" name="q" class="form-control" 
-                                   placeholder="🔍 Buscar en preguntas frecuentes..." 
-                                   value="{{ request.GET.q }}">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="fas fa-search me-2"></i>Buscar
-                            </button>
-                        </div>
-                    </form>
+        <div class="col-md-6">
+            <form method="get" action="{% url 'help_center:search_help' %}">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Buscar en preguntas frecuentes...">
+                    <button class="btn btn-primary" type="submit">Buscar</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -54,33 +29,25 @@
     {% regroup faqs by category as category_list %}
     
     {% for category in category_list %}
-    <div class="card card-dashboard mb-4">
-        <div class="card-header">
-            <h3 class="h5 mb-0 text-gradient">
-                <i class="fas fa-folder me-2"></i>📂 {{ category.grouper.name }}
-            </h3>
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h3 class="h5 mb-0">{{ category.grouper.name }}</h3>
         </div>
         <div class="card-body">
             <div class="accordion" id="accordion{{ category.grouper.id }}">
                 {% for faq in category.list %}
-                <div class="accordion-item glass-effect mb-3 border-cyber">
+                <div class="accordion-item">
                     <h2 class="accordion-header" id="heading{{ faq.id }}">
-                        <button class="accordion-button collapsed text-white" type="button" 
-                                data-bs-toggle="collapse" data-bs-target="#collapse{{ faq.id }}" 
-                                aria-expanded="false" aria-controls="collapse{{ faq.id }}">
-                            <i class="fas fa-question-circle me-3 text-primary"></i>
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse{{ faq.id }}" aria-expanded="false" 
+                                aria-controls="collapse{{ faq.id }}">
                             {{ faq.question }}
                         </button>
                     </h2>
                     <div id="collapse{{ faq.id }}" class="accordion-collapse collapse" 
                          aria-labelledby="heading{{ faq.id }}" data-bs-parent="#accordion{{ category.grouper.id }}">
-                        <div class="accordion-body text-muted">
-                            <div class="d-flex align-items-start">
-                                <i class="fas fa-lightbulb text-warning me-3 mt-1"></i>
-                                <div>
-                                    {{ faq.answer|linebreaks }}
-                                </div>
-                            </div>
+                        <div class="accordion-body">
+                            {{ faq.answer|linebreaks }}
                         </div>
                     </div>
                 </div>
@@ -89,55 +56,21 @@
         </div>
     </div>
     {% empty %}
-    <div class="card card-dashboard">
-        <div class="card-body text-center py-5">
-            <div class="cyber-glow mb-4">
-                <i class="fas fa-question-circle fa-4x text-muted"></i>
-            </div>
-            <h4 class="text-white mb-3">📭 No hay preguntas frecuentes</h4>
-            <p class="text-muted">No hay preguntas frecuentes disponibles en este momento.</p>
-        </div>
+    <div class="alert alert-info">
+        <p class="mb-0">No hay preguntas frecuentes disponibles en este momento.</p>
     </div>
     {% endfor %}
     
     <!-- Enlace de contacto adicional -->
-    <div class="card card-dashboard">
+    <div class="card">
         <div class="card-body text-center">
-            <div class="cyber-glow mb-4">
-                <i class="fas fa-headset fa-3x text-primary"></i>
-            </div>
-            <h4 class="text-gradient mb-3">¿No encontraste lo que buscabas?</h4>
-            <p class="text-muted mb-4">Nuestro equipo de soporte está aquí para ayudarte con cualquier pregunta adicional.</p>
-            <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <a href="{% url 'help_center:help_center' %}" class="btn btn-primary btn-lg hover-lift">
-                    <i class="fas fa-home me-2"></i>🏠 Ir al Centro de Ayuda
-                </a>
-                <a href="{% url 'help_center:search_help' %}" class="btn btn-outline-primary btn-lg hover-lift">
-                    <i class="fas fa-search me-2"></i>🔍 Buscar Artículos
-                </a>
-                <a href="/contact/" class="btn btn-success btn-lg hover-lift">
-                    <i class="fas fa-envelope me-2"></i>📧 Contactar Soporte
-                </a>
+            <h5>¿No encontraste lo que buscabas?</h5>
+            <p class="mb-3">Puedes buscar en nuestro centro de ayuda o contactar con soporte.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'help_center:help_center' %}" class="btn btn-primary">Ir al Centro de Ayuda</a>
+                <a href="{% url 'help_center:search_help' %}" class="btn btn-outline-primary">Buscar Artículos</a>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-// Auto-expand FAQ if there's a hash in URL
-document.addEventListener('DOMContentLoaded', function() {
-    const hash = window.location.hash;
-    if (hash) {
-        const targetElement = document.querySelector(hash);
-        if (targetElement && targetElement.classList.contains('accordion-collapse')) {
-            const bsCollapse = new bootstrap.Collapse(targetElement, {
-                toggle: true
-            });
-        }
-    }
-});
-</script>
 {% endblock %}

@@ -1,287 +1,212 @@
 {% extends 'base.html' %}
+
 {% load static %}
-{% load humanize %}
 
 {% block content %}
 
-<!-- ========================= SECTION PAGETOP CYBER ========================= -->
-<section class="section-pagetop bg-dark">
+<!-- ========================= SECTION PAGETOP ========================= -->
+<section class="section-pagetop bg">
     <div class="container">
-        <div class="row align-items-center py-5">
-            <div class="col-lg-6 reveal-left">
-                <h1 class="display-4 fw-bold text-gradient mb-3">🛍️ Nuestra Tienda</h1>
-                <p class="lead mb-0">Descubre todos nuestros productos con diseño Cyber Minimal</p>
-            </div>
-            <div class="col-lg-6 reveal-right">
-                <div class="text-lg-end">
-                    <span class="badge bg-primary fs-6">
-                        <i class="fas fa-box me-2"></i><b>{{ product_count }}</b> Productos Encontrados
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
+        <h2 class="title-page">Nuestra Tienda</h2>
+
+    </div> <!-- container //  -->
 </section>
 <!-- ========================= SECTION INTRO END// ========================= -->
 
-<!-- ========================= SECTION CONTENT CYBER ========================= -->
+<!-- ========================= SECTION CONTENT ========================= -->
 <section class="section-content padding-y">
     <div class="container">
+
         <div class="row">
-            <!-- SIDEBAR FILTERS -->
-            <aside class="col-lg-3">
-                <div class="card glass-effect mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-filter me-2"></i>🔧 Filtros</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- Categories Filter -->
-                        <div class="filter-group mb-4">
-                            <h6 class="text-primary mb-3">📂 Categorías</h6>
-                            <div class="list-group list-group-flush">
-                                <a href="{% url 'store' %}" class="list-group-item list-group-item-action {% if not current_category %}active{% endif %}">
-                                    Todos los Productos
-                                </a>
-                                {% for category in links %}
-                                <a href="{{ category.get_url }}" class="list-group-item list-group-item-action {% if current_category == category.slug %}active{% endif %}">
-                                    {{ category.category_name }}
-                                </a>
-                                {% endfor %}
-                            </div>
-                        </div>
+            <aside class="col-md-3">
 
-                        <!-- Price Filter -->
-                        <div class="filter-group">
-                            <h6 class="text-primary mb-3">💰 Rango de Precios</h6>
-                            <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <label class="form-label small">Mínimo</label>
-                                    <input type="number" class="form-control" placeholder="0" min="0">
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label small">Máximo</label>
-                                    <input type="number" class="form-control" placeholder="1000000" min="0">
-                                </div>
-                            </div>
-                            <button class="btn btn-primary w-100 hover-lift">
-                                <i class="fas fa-search me-2"></i>Aplicar Filtros
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="card glass-effect">
-                    <div class="card-body text-center">
-                        <h6 class="text-primary mb-3">⚡ Acciones Rápidas</h6>
-                        <div class="d-grid gap-2">
-                            <a href="{% url 'cart' %}" class="btn btn-outline-primary hover-lift">
-                                <i class="fas fa-shopping-cart me-2"></i>Ver Carrito
+                <div class="card">
+                    <article class="filter-group">
+                        <header class="card-header">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
+                                <i class="icon-control fa fa-chevron-down"></i>
+                                <h6 class="title">Categorias</h6>
                             </a>
-                            <a href="{% url 'chat:chat' %}" class="btn btn-outline-info hover-lift">
-                                <i class="fas fa-robot me-2"></i>Chat de Ayuda
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </aside>
+                        </header>
+                        <div class="filter-content collapse show" id="collapse_1" style="">
+                            <div class="card-body">
 
-            <!-- MAIN CONTENT -->
-            <main class="col-lg-9">
-                <!-- Sorting Options -->
-                <div class="card glass-effect mb-4">
-                    <div class="card-body py-3">
-                        <div class="row align-items-center">
-                            <div class="col-md-6">
-                                <span class="text-muted">
-                                    <i class="fas fa-sort me-2"></i>Ordenar por:
-                                </span>
-                                <select class="form-select d-inline-block w-auto ms-2">
-                                    <option>Más Relevantes</option>
-                                    <option>Precio: Menor a Mayor</option>
-                                    <option>Precio: Mayor a Menor</option>
-                                    <option>Mejor Calificados</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 text-md-end">
-                                <span class="text-muted">
-                                    Mostrando <strong>{{ products|length }}</strong> de <strong>{{ product_count }}</strong> productos
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Products Grid -->
-                <div class="row">
-                    {% if products %}
-                        {% for product in products %}
-                        <div class="col-xl-4 col-lg-6 col-md-6 mb-4 reveal-up" data-delay="{% widthratio forloop.counter0 1 100 %}">
-                            <div class="card card-product-grid glass-effect hover-lift h-100">
-                                <div class="position-relative overflow-hidden">
-                                    <a href="{{ product.get_url}}" class="img-wrap">
-                                        <img src="{{ product.images.url }}" class="card-img-top store-product-img" alt="{{ product.product_name }}">
-                                        <div class="product-overlay">
-                                            <span class="btn btn-primary btn-sm">Ver Detalles</span>
-                                        </div>
-                                    </a>
-                                    {% if product.is_new %}
-                                    <span class="badge bg-success position-absolute top-0 start-0 m-3">Nuevo</span>
-                                    {% endif %}
-                                </div>
                                 
-                                <div class="card-body d-flex flex-column">
-                                    <h6 class="card-title">
-                                        <a href="{{ product.get_url}}" class="text-decoration-none product-title">{{ product.product_name }}</a>
-                                    </h6>
-                                    
-                                    <div class="price-wrap mt-auto mb-3">
-                                        <span class="price h5 text-success">Gs. {{ product.price|intcomma }}</span>
-                                        {% if product.old_price %}
-                                        <small class="text-muted text-decoration-line-through ms-2">Gs. {{ product.old_price|intcomma }}</small>
-                                        {% endif %}
-                                    </div>
 
-                                    <div class="rating-stars mb-3">
-                                        <span class="text-warning">
-                                            <i class="fa fa-star{% if product.averageReview < 0.5 %}-o{% elif product.averageReview >= 0.5 and product.averageReview < 1 %}-half-o {% endif %}"></i>
-                                            <i class="fa fa-star{% if product.averageReview < 1.5 %}-o{% elif product.averageReview >= 1.5 and product.averageReview < 2 %}-half-o {% endif %}"></i>
-                                            <i class="fa fa-star{% if product.averageReview < 2.5 %}-o{% elif product.averageReview >= 2.5 and product.averageReview < 3 %}-half-o {% endif %}"></i>
-                                            <i class="fa fa-star{% if product.averageReview < 3.5 %}-o{% elif product.averageReview >= 3.5 and product.averageReview < 4 %}-half-o {% endif %}"></i>
-                                            <i class="fa fa-star{% if product.averageReview < 4.5 %}-o{% elif product.averageReview >= 4.5 and product.averageReview < 5 %}-half-o {% endif %}"></i>
-                                        </span>
-                                        <small class="text-muted ms-2">({{ product.countReview }})</small>
-                                    </div>
+                                <ul class="list-menu">
+                                    <li><a href="{% url "store" %}">Todos</a></li>
 
-                                    <div class="mt-auto">
-                                        {% if product.stock > 0 %}
-                                        <a href="{% url 'add_cart' product.id %}" class="btn btn-success w-100 hover-lift">
-                                            <i class="fas fa-cart-plus me-2"></i>Agregar al Carrito
-                                        </a>
-                                        {% else %}
-                                        <button class="btn btn-secondary w-100" disabled>
-                                            <i class="fas fa-times me-2"></i>Agotado
-                                        </button>
-                                        {% endif %}
+                                    {% for category in links %}
+                                    <li><a href="{{ category.get_url }}">{{category.category_name}} </a></li>
+                                    {% endfor %}
+                                </ul>
+
+                                
+                            </div> <!-- card-body.// -->
+                        </div>
+                    </article> <!-- filter-group  .// -->
+                    <article class="filter-group">
+                        <header class="card-header">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
+                                <i class="icon-control fa fa-chevron-down"></i>
+                                <h6 class="title">Tamanos </h6>
+                            </a>
+                        </header>
+                        <div class="filter-content collapse show" id="collapse_4" style="">
+                            <div class="card-body">
+                                <label class="checkbox-btn">
+                                    <input type="checkbox">
+                                    <span class="btn btn-light"> XS </span>
+                                </label>
+
+                                <label class="checkbox-btn">
+                                    <input type="checkbox">
+                                    <span class="btn btn-light"> SM </span>
+                                </label>
+
+                                <label class="checkbox-btn">
+                                    <input type="checkbox">
+                                    <span class="btn btn-light"> LG </span>
+                                </label>
+
+                                <label class="checkbox-btn">
+                                    <input type="checkbox">
+                                    <span class="btn btn-light"> XXL </span>
+                                </label>
+                            </div><!-- card-body.// -->
+                        </div>
+                    </article> <!-- filter-group .// -->
+
+                    <article class="filter-group">
+                        <header class="card-header">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+                                <i class="icon-control fa fa-chevron-down"></i>
+                                <h6 class="title">Precios </h6>
+                            </a>
+                        </header>
+                        <div class="filter-content collapse show" id="collapse_3" style="">
+                            <div class="card-body">
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Min</label>
+                                        <!-- <input class="form-control" placeholder="$0" type="number"> -->
+                                        <select class="mr-2 form-control">
+                                            <option value="0">$0</option>
+                                            <option value="50">$50</option>
+                                            <option value="100">$100</option>
+                                            <option value="150">$150</option>
+                                            <option value="200">$200</option>
+                                            <option value="500">$500</option>
+                                            <option value="1000">$1000</option>
+                                        </select>
                                     </div>
-                                </div>
-                            </div>
+                                    <div class="form-group text-right col-md-6">
+                                        <label>Max</label>
+                                        <select class="mr-2 form-control">
+                                            <option value="50">$50</option>
+                                            <option value="100">$100</option>
+                                            <option value="150">$150</option>
+                                            <option value="200">$200</option>
+                                            <option value="500">$500</option>
+                                            <option value="1000">$1000</option>
+                                            <option value="2000">$2000+</option>
+                                        </select>
+                                    </div>
+                                </div> <!-- form-row.// -->
+                                <button class="btn btn-block btn-primary">Buscar</button>
+                            </div><!-- card-body.// -->
                         </div>
-                        {% endfor %}
-                    {% else %}
-                    <div class="col-12">
-                        <div class="card glass-effect">
-                            <div class="card-body text-center py-5">
-                                <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                                <h4 class="text-muted mb-3">No se encontraron productos</h4>
-                                <p class="text-muted mb-4">Intenta con otros filtros o términos de búsqueda</p>
-                                <a href="{% url 'store' %}" class="btn btn-primary hover-lift">
-                                    <i class="fas fa-redo me-2"></i>Ver Todos los Productos
-                                </a>
-                            </div>
-                        </div>
+                    </article> <!-- filter-group .// -->
+
+                </div> <!-- card.// -->
+
+            </aside> <!-- col.// -->
+            <main class="col-md-9">
+
+                <header class="border-bottom mb-4 pb-3">
+                    <div class="form-inline">
+                        <span class="mr-md-auto"> <b>{{ product_count }}</b> Productos Encontrados </span>
+
                     </div>
-                    {% endif %}
-                </div>
+                </header><!-- sect-heading -->
 
-                <!-- PAGINATION -->
-                {% if products.has_other_pages %}
-                <nav class="mt-5" aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
+                <div class="row">
+
+                    {% if products %}
+                    {% for product in products %}
+                    <div class="col-md-4">
+                        <figure class="card card-product-grid">
+                            <div class="img-wrap">
+
+                                <a href="{{ product.get_url}}"><img src="{{product.images.url}}"></a>
+
+                            </div> <!-- img-wrap.// -->
+                            <figcaption class="info-wrap">
+                                <div class="fix-height">
+                                    <a href="{{ product.get_url}}" class="title">{{product.product_name}}</a>
+                                    <div class="price-wrap mt-2">
+                                        <span class="price">{{product.price}}</span>
+                                    </div> <!-- price-wrap.// -->
+                                </div>
+                                <a href="{% url 'add_cart' product.id %}" class="btn btn-block btn-success">Agregar al Carrito </a>
+                            </figcaption>
+                        </figure>
+                    </div> <!-- col.// -->
+                    {% endfor %}
+                    {% else %}
+                        <div>
+                            <h2> No se encontraronresultados. Intente Despues </h2>
+                        </div>
+                    {% endif %}
+
+
+                </div> <!-- row end.// -->
+
+
+                <nav class="mt-4" aria-label="Page navigation sample">
+
+
+                    {% if products.has_other_pages %}
+                    <ul class="pagination">
+
                         {% if products.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link hover-lift" href="?page={{ products.previous_page_number }}">
-                                <i class="fas fa-chevron-left me-2"></i>Anterior
-                            </a>
-                        </li>
-                        {% else %}
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#">
-                                <i class="fas fa-chevron-left me-2"></i>Anterior
-                            </a>
-                        </li>
+                        <li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">Anterior</a></li>
+                            {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
                         {% endif %}
 
                         {% for i in products.paginator.page_range %}
-                            {% if products.number == i %}
-                            <li class="page-item active">
-                                <a class="page-link" href="#">{{ i }}</a>
-                            </li>
+
+                        {% if products.number == i %}
+                        <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
                             {% else %}
-                            <li class="page-item">
-                                <a class="page-link hover-lift" href="?page={{ i }}">{{ i }}</a>
-                            </li>
-                            {% endif %}
+                                <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+
+
+                        {% endif %}
                         {% endfor %}
 
+
                         {% if products.has_next %}
-                        <li class="page-item">
-                            <a class="page-link hover-lift" href="?page={{ products.next_page_number }}">
-                                Siguiente<i class="fas fa-chevron-right ms-2"></i>
-                            </a>
-                        </li>
-                        {% else %}
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#">
-                                Siguiente<i class="fas fa-chevron-right ms-2"></i>
-                            </a>
-                        </li>
+                        <li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">Siguiente</a></li>
+                            {% else %}
+
+                            <li class="page-item disabled"><a class="page-link" href="#">Siguiente</a></li>
                         {% endif %}
                     </ul>
+                    {% endif %}
+
+
                 </nav>
-                {% endif %}
-            </main>
+
+            </main> <!-- col.// -->
+
         </div>
-    </div>
+
+    </div> <!-- container .//  -->
 </section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
 
-<style>
-.store-product-img {
-    height: 200px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
 
-.card-product-grid:hover .store-product-img {
-    transform: scale(1.05);
-}
-
-.product-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.1));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.card-product-grid:hover .product-overlay {
-    opacity: 1;
-}
-
-.list-group-item {
-    background: transparent;
-    border-color: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
-    transition: all 0.3s ease;
-}
-
-.list-group-item:hover,
-.list-group-item.active {
-    background: rgba(99, 102, 241, 0.1);
-    border-color: var(--cyber-indigo);
-    color: var(--cyber-indigo);
-}
-
-@media (max-width: 768px) {
-    .display-4 {
-        font-size: 2rem;
-    }
-}
-</style>
 {% endblock %}
