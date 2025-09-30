@@ -1,71 +1,139 @@
 {% extends 'admin_panel/base.html' %}
+{% load static %}
 
-{% block title %}Usuarios - Panel Admin{% endblock %}
-{% block page_title %}Gestión de Usuarios{% endblock %}
+{% block title %}Usuarios - DavBorn Store{% endblock %}
+{% block page_title %}👥 Gestión de Usuarios{% endblock %}
 
 {% block content %}
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Cyber Minimal CSS -->
+<link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <div class="card card-dashboard">
-    <div class="card-header">
-        <h5 class="card-title mb-0">Lista de Usuarios</h5>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">📋 Lista de Usuarios</h5>
+        <span class="badge bg-primary fs-6">{{ users.count }} usuarios</span>
     </div>
     <div class="card-body">
+        {% if users %}
         <div class="table-responsive">
             <table class="table table-hover">
-                <thead class="table-light">
+                <thead>
                     <tr>
-                        <th>Usuario</th>
-                        <th>Email</th>
-                        <th>Nombre</th>
-                        <th>Teléfono</th>
-                        <th>Fecha Registro</th>
-                        <th>Estado</th>
-                        <th>Roles</th>
-                        <th>Acciones</th>
+                        <th>👤 Usuario</th>
+                        <th>📧 Email</th>
+                        <th>📛 Nombre</th>
+                        <th>📞 Teléfono</th>
+                        <th>📅 Fecha Registro</th>
+                        <th>📊 Estado</th>
+                        <th>🎭 Roles</th>
+                        <th>⚡ Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users %}
-                    <tr>
+                    <tr class="hover-lift">
                         <td>
-                            <strong>{{ user.username }}</strong>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 40px; height: 40px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                <strong class="text-white">{{ user.username }}</strong>
+                            </div>
                         </td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.full_name }}</td>
-                        <td>{{ user.phone_number|default:"-" }}</td>
-                        <td>{{ user.date_joined|date:"d/m/Y" }}</td>
                         <td>
-                            <span class="badge {% if user.is_active %}bg-success{% else %}bg-danger{% endif %}">
-                                {{ user.is_active|yesno:"Activo,Inactivo" }}
+                            <span class="text-muted">{{ user.email }}</span>
+                        </td>
+                        <td>
+                            <span class="text-white">{{ user.full_name|default:"-" }}</span>
+                        </td>
+                        <td>
+                            <span class="text-muted">{{ user.phone_number|default:"-" }}</span>
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ user.date_joined|date:"d/m/Y" }}</small>
+                        </td>
+                        <td>
+                            <span class="badge fs-6 {% if user.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ user.is_active|yesno:"✅ Activo,❌ Inactivo" }}
                             </span>
                         </td>
                         <td>
                             {% if user.is_superadmin %}
-                            <span class="badge bg-danger">SuperAdmin</span>
+                            <span class="badge bg-danger">👑 SuperAdmin</span>
                             {% elif user.is_admin %}
-                            <span class="badge bg-warning">Admin</span>
+                            <span class="badge bg-warning">🛡️ Admin</span>
                             {% elif user.is_staff %}
-                            <span class="badge bg-info">Vendedor</span>
+                            <span class="badge bg-info">📊 Vendedor</span>
                             {% else %}
-                            <span class="badge bg-secondary">Usuario</span>
+                            <span class="badge bg-secondary">👤 Usuario</span>
                             {% endif %}
                         </td>
                         <td>
-                            <a href="{% url 'admin_panel:user_edit_role' user.id %}" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-user-cog"></i> Roles
+                            <a href="{% url 'admin_panel:user_edit_role' user.id %}" 
+                               class="btn btn-sm btn-outline-primary hover-lift" 
+                               title="Gestionar roles del usuario">
+                                <i class="fas fa-user-cog me-1"></i>🛠️ Roles
                             </a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="8" class="text-center py-4">
-                            <i class="fas fa-users fa-2x text-muted mb-2"></i>
-                            <p class="text-muted">No hay usuarios registrados</p>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        <!-- Estadísticas -->
+        <div class="row mt-4 pt-4 border-top">
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-gradient">{{ total_users }}</h3>
+                        <p class="text-muted mb-0">👥 Total Usuarios</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">{{ active_users }}</h3>
+                        <p class="text-muted mb-0">✅ Activos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-warning">{{ staff_users }}</h3>
+                        <p class="text-muted mb-0">📊 Vendedores</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-info">{{ admin_users }}</h3>
+                        <p class="text-muted mb-0">🛡️ Administradores</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
+        <div class="text-center py-5">
+            <div class="cyber-glow mb-4">
+                <i class="fas fa-users fa-4x text-muted"></i>
+            </div>
+            <h4 class="text-white mb-3">📭 No hay usuarios registrados</h4>
+            <p class="text-muted">Los usuarios aparecerán aquí cuando se registren en DavBorn Store.</p>
+        </div>
+        {% endif %}
     </div>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

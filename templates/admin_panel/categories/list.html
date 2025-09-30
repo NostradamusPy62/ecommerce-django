@@ -1,76 +1,130 @@
 {% extends 'admin_panel/base.html' %}
+{% load static %}
 
-{% block title %}Categorías - Panel Admin{% endblock %}
-{% block page_title %}Gestión de Categorías{% endblock %}
+{% block title %}Categorías - DavBorn Store{% endblock %}
+{% block page_title %}📂 Gestión de Categorías{% endblock %}
 
 {% block content %}
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Cyber Minimal CSS -->
+<link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <div class="card card-dashboard">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">Lista de Categorías</h5>
+        <h5 class="card-title mb-0">📋 Lista de Categorías</h5>
         <div>
-            <a href="{% url 'admin_panel:category_add' %}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Nueva Categoría
+            <a href="{% url 'admin_panel:category_add' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>➕ Nueva Categoría
             </a>
         </div>
     </div>
     <div class="card-body">
+        {% if categories %}
         <div class="table-responsive">
             <table class="table table-hover">
-                <thead class="table-light">
+                <thead>
                     <tr>
-                        <th>Imagen</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Slug</th>
-                        <th>Productos</th>
-                        <th>Acciones</th>
+                        <th>🖼️ Imagen</th>
+                        <th>📛 Nombre</th>
+                        <th>📝 Descripción</th>
+                        <th>🔗 Slug</th>
+                        <th>📦 Productos</th>
+                        <th>⚡ Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for category in categories %}
-                    <tr>
+                    <tr class="hover-lift">
                         <td>
                             {% if category.cat_image %}
                             <img src="{{ category.cat_image.url }}" alt="{{ category.category_name }}" 
-                                 style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                                 class="rounded hover-lift" 
+                                 style="width: 60px; height: 60px; object-fit: cover;">
                             {% else %}
-                            <div class="bg-light rounded d-flex align-items-center justify-content-center" 
-                                 style="width: 50px; height: 50px;">
+                            <div class="glass-effect rounded d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
                                 <i class="fas fa-tag text-muted"></i>
                             </div>
                             {% endif %}
                         </td>
                         <td>
-                            <strong>{{ category.category_name }}</strong>
+                            <strong class="text-black">{{ category.category_name }}</strong>
                         </td>
-                        <td>{{ category.description|default:"-" }}</td>
-                        <td><code>{{ category.slug }}</code></td>
                         <td>
-                            <span class="badge bg-primary">{{ category.product_set.count }}</span>
+                            <span class="text-muted">{{ category.description|default:"-"|truncatewords:8 }}</span>
+                        </td>
+                        <td>
+                            <code class="bg-dark px-2 py-1 rounded">{{ category.slug }}</code>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary fs-6">{{ category.product_set.count }}</span>
                         </td>
                         <td>
                             <div class="btn-group table-actions">
-                                <a href="{% url 'admin_panel:category_edit' category.id %}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
+                                <a href="{% url 'admin_panel:category_edit' category.id %}" 
+                                   class="btn btn-sm btn-outline-primary hover-lift" 
+                                   title="Editar categoría">
+                                    <i class="fas fa-edit"></i> ✏️
                                 </a>
-                                <a href="{% url 'admin_panel:category_delete' category.id %}" class="btn btn-sm btn-outline-danger">
-                                    <i class="fas fa-trash"></i>
+                                <a href="{% url 'admin_panel:category_delete' category.id %}" 
+                                   class="btn btn-sm btn-outline-danger hover-lift" 
+                                   title="Eliminar categoría">
+                                    <i class="fas fa-trash"></i> 🗑️
                                 </a>
                             </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="6" class="text-center py-4">
-                            <i class="fas fa-tags fa-2x text-muted mb-2"></i>
-                            <p class="text-muted">No hay categorías registradas</p>
-                            <a href="{% url 'admin_panel:category_add' %}" class="btn btn-primary">Agregar Primera Categoría</a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        
+        <!-- Estadísticas -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-gradient">{{ categories.count }}</h3>
+                        <p class="text-muted mb-0">Total Categorías</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">{{ total_products }}</h3>
+                        <p class="text-muted mb-0">Total Productos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-warning">{{ avg_products_per_category }}</h3>
+                        <p class="text-muted mb-0">Promedio por Categoría</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
+        <div class="text-center py-5">
+            <div class="cyber-glow mb-4">
+                <i class="fas fa-tags fa-4x text-muted"></i>
+            </div>
+            <h4 class="text-white mb-3"> No hay categorías registradas</h4>
+            <p class="text-muted mb-4">Comienza agregando tu primera categoría para organizar los productos.</p>
+            <a href="{% url 'admin_panel:category_add' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i> Agregar Primera Categoría
+            </a>
+        </div>
+        {% endif %}
     </div>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

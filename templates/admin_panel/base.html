@@ -1,99 +1,148 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Panel de Administración - Ecommerce{% endblock %}</title>
+    <title>{% block title %}👑 Panel Admin - DavBorn Store{% endblock %}</title>
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Cyber Minimal CSS -->
+    <link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        .sidebar {
+        .admin-sidebar {
             min-height: 100vh;
-            background: #2c3e50;
-            color: white;
-            transition: all 0.3s;
+            background: linear-gradient(135deg, var(--cyber-black) 0%, var(--cyber-dark-gray) 100%);
+            color: var(--cyber-white);
+            transition: var(--transition-smooth);
+            border-right: 1px solid var(--glass-border);
         }
-        .sidebar .nav-link {
-            color: #ecf0f1;
+        .admin-sidebar .nav-link {
+            color: var(--cyber-white) !important;
             padding: 15px 20px;
             border-left: 4px solid transparent;
+            transition: var(--transition-smooth);
+            margin: 2px 0;
         }
-        .sidebar .nav-link:hover {
-            background: #34495e;
-            border-left: 4px solid #3498db;
+        .admin-sidebar .nav-link:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid var(--cyber-indigo);
+            transform: translateX(5px);
         }
-        .sidebar .nav-link.active {
-            background: #34495e;
-            border-left: 4px solid #3498db;
+        .admin-sidebar .nav-link.active {
+            background: rgba(99, 102, 241, 0.15);
+            border-left: 4px solid var(--cyber-indigo);
         }
-        .sidebar .nav-link i {
-            margin-right: 10px;
+        .admin-sidebar .nav-link i {
+            margin-right: 12px;
             width: 20px;
             text-align: center;
+            font-size: 1.1rem;
         }
-        .main-content {
-            background: #f8f9fa;
+        .admin-main-content {
+            background: var(--cyber-black);
             min-height: 100vh;
+            padding: 2rem;
         }
         .card-dashboard {
-            border-radius: 10px;
-            border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: var(--glass-shadow);
+            transition: var(--transition-smooth);
         }
         .card-dashboard:hover {
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
         }
         .stat-card {
             text-align: center;
-            padding: 20px;
+            padding: 25px 20px;
+            border-radius: 16px;
+            color: var(--cyber-white);
+            transition: var(--transition-smooth);
+        }
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
         }
         .stat-card i {
             font-size: 2.5rem;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            opacity: 0.9;
         }
-        .bg-primary { background: linear-gradient(45deg, #3498db, #2980b9) !important; }
-        .bg-success { background: linear-gradient(45deg, #27ae60, #229954) !important; }
-        .bg-warning { background: linear-gradient(45deg, #f39c12, #e67e22) !important; }
-        .bg-danger { background: linear-gradient(45deg, #e74c3c, #c0392b) !important; }
-        .table-actions a {
-            margin-right: 5px;
+        .admin-badge {
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+        }
+        .dropdown-menu {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+        }
+        .dropdown-item {
+            color: var(--cyber-white);
+            transition: var(--transition-smooth);
+        }
+        .dropdown-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--cyber-indigo);
+        }
+        .sidebar-brand {
+            padding: 2rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
         }
     </style>
 </head>
-<body>
+<body class="cyber-bg">
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar">
                 <div class="position-sticky pt-3">
-                    <div class="text-center mb-4">
-                        <h4><i class="fas fa-crown"></i> Panel Admin</h4>
+                    <div class="sidebar-brand text-center">
+                        <h4 class="text-gradient mb-2">👑 DavBorn Admin</h4>
                         <small class="text-muted">{{ request.user.email }}</small>
+                        <div class="mt-2">
+                            <span class="badge admin-badge 
+                                {% if request.user.is_superadmin %}bg-danger
+                                {% elif request.user.is_admin %}bg-warning
+                                {% elif request.user.is_staff %}bg-info
+                                {% else %}bg-secondary{% endif %}">
+                                {% if request.user.is_superadmin %}👑 SuperAdmin
+                                {% elif request.user.is_admin %}🛡️ Admin
+                                {% elif request.user.is_staff %}📊 Vendedor
+                                {% else %}👤 Usuario{% endif %}
+                            </span>
+                        </div>
                     </div>
                     
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'admin_panel:dashboard' %}">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                                <i class="fas fa-tachometer-alt"></i> 📊 Dashboard
                             </a>
                         </li>
                         
                         {% if request.user.is_admin or request.user.is_superadmin %}
                         <li class="nav-item">
                             <a class="nav-link {% if 'products' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'admin_panel:product_list' %}">
-                                <i class="fas fa-box"></i> Productos
+                                <i class="fas fa-box"></i> 📦 Productos
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if 'categories' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'admin_panel:category_list' %}">
-                                <i class="fas fa-tags"></i> Categorías
+                                <i class="fas fa-tags"></i> 📂 Categorías
                             </a>
                         </li>
                         {% endif %}
@@ -101,7 +150,7 @@
                         {% if request.user.is_staff or request.user.is_admin or request.user.is_superadmin %}
                         <li class="nav-item">
                             <a class="nav-link {% if 'orders' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'admin_panel:order_list' %}">
-                                <i class="fas fa-shopping-cart"></i> Pedidos
+                                <i class="fas fa-shopping-cart"></i> 🛒 Pedidos
                             </a>
                         </li>
                         {% endif %}
@@ -109,7 +158,7 @@
                         {% if request.user.is_superadmin %}
                         <li class="nav-item">
                             <a class="nav-link {% if 'users' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'admin_panel:user_list' %}">
-                                <i class="fas fa-users"></i> Usuarios
+                                <i class="fas fa-users"></i> 👥 Usuarios
                             </a>
                         </li>
                         {% endif %}
@@ -117,31 +166,31 @@
                         {% if request.user.is_staff or request.user.is_admin or request.user.is_superadmin %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="fas fa-chart-bar"></i> Reportes
+                                <i class="fas fa-chart-bar"></i> 📈 Reportes
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'admin_panel:sales_report' %}">Ventas</a></li>
-                                <li><a class="dropdown-item" href="{% url 'admin_panel:products_report' %}">Productos</a></li>
+                                <li><a class="dropdown-item" href="{% url 'admin_panel:sales_report' %}">💰 Ventas</a></li>
+                                <li><a class="dropdown-item" href="{% url 'admin_panel:products_report' %}">📦 Productos</a></li>
                                 {% if request.user.is_superadmin %}
-                                <li><a class="dropdown-item" href="{% url 'admin_panel:users_report' %}">Usuarios</a></li>
+                                <li><a class="dropdown-item" href="{% url 'admin_panel:users_report' %}">👥 Usuarios</a></li>
                                 {% endif %}
                             </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if 'chat' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'admin_panel:chat_history' %}">
-                                <i class="fas fa-comments"></i> Chat
+                                <i class="fas fa-comments"></i> 💬 Chat
                             </a>
                         </li>
                         {% endif %}
                         
-                        <li class="nav-item mt-4">
+                        <li class="nav-item mt-4 pt-3 border-top">
                             <a class="nav-link text-warning" href="{% url 'home' %}">
-                                <i class="fas fa-store"></i> Ir a la Tienda
+                                <i class="fas fa-store"></i> 🏪 Ir a la Tienda
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-danger" href="{% url 'logout' %}">
-                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                <i class="fas fa-sign-out-alt"></i> 🚪 Cerrar Sesión
                             </a>
                         </li>
                     </ul>
@@ -149,33 +198,30 @@
             </nav>
 
             <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 main-content">
-                <div class="container-fluid py-4">
+            <main class="col-md-9 ms-sm-auto col-lg-10 admin-main-content">
+                <div class="container-fluid">
                     <!-- Header -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2>{% block page_title %}Panel de Administración{% endblock %}</h2>
+                        <h2 class="text-gradient">{% block page_title %}👑 Panel de Administración{% endblock %}</h2>
                         <div class="btn-group">
-                            <span class="badge bg-primary">
-                                {% if request.user.is_superadmin %}
-                                    SuperAdmin
-                                {% elif request.user.is_admin %}
-                                    Admin
-                                {% elif request.user.is_staff %}
-                                    Vendedor
-                                {% else %}
-                                    Usuario
-                                {% endif %}
+                            <span class="badge admin-badge bg-primary">
+                                <i class="fas fa-clock me-1"></i>{{ current_time|date:"H:i" }}
                             </span>
                         </div>
                     </div>
 
                     <!-- Messages -->
                     {% if messages %}
-                    <div class="messages">
+                    <div class="messages mb-4">
                         {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <div class="alert alert-{{ message.tags }} glass-effect alert-dismissible fade show" role="alert">
+                            <i class="fas 
+                                {% if message.tags == 'success' %}fa-check-circle
+                                {% elif message.tags == 'warning' %}fa-exclamation-triangle
+                                {% elif message.tags == 'error' %}fa-times-circle
+                                {% else %}fa-info-circle{% endif %} me-2"></i>
                             {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
                         </div>
                         {% endfor %}
                     </div>

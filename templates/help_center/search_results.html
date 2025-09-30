@@ -1,51 +1,139 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Resultados de Búsqueda - Ayuda{% endblock %}
+{% block title %}🔍 Resultados de Búsqueda - Ayuda - DavBorn Store{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Cyber Minimal CSS -->
+<link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<div class="container mt-4 cyber-bg" style="min-height: 100vh;">
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'help_center:help_center' %}">Ayuda</a></li>
-            <li class="breadcrumb-item active">Resultados de Búsqueda</li>
+        <ol class="breadcrumb glass-effect px-3 py-2 rounded">
+            <li class="breadcrumb-item">
+                <a href="{% url 'help_center:help_center' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>🏠 Ayuda
+                </a>
+            </li>
+            <li class="breadcrumb-item active text-white">🔍 Resultados de Búsqueda</li>
         </ol>
     </nav>
 
-    <h1 class="mb-4">Resultados de Búsqueda</h1>
-    
-    {% if query %}
-    <p class="lead">Buscando: "<strong>{{ query }}</strong>"</p>
-    {% endif %}
+    <div class="card card-dashboard mb-4">
+        <div class="card-body">
+            <h1 class="text-gradient mb-3">🔍 Resultados de Búsqueda</h1>
+            
+            {% if query %}
+            <p class="lead text-muted">
+                Buscando: "<strong class="text-white">{{ query }}</strong>"
+                <span class="badge bg-primary ms-2">{{ results.count }} resultados</span>
+            </p>
+            {% endif %}
+
+            <!-- Nueva búsqueda -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <form action="{% url 'help_center:search_help' %}" method="get">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" 
+                                   placeholder="🔍 Buscar otra cosa..." value="{{ query }}">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search me-2"></i>Buscar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     
     {% if results %}
-    <div class="list-group">
-        {% for article in results %}
-        <a href="{% url 'help_center:article_detail' article.slug %}" 
-           class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ article.title }}</h5>
-                <small class="text-muted">{{ article.category.name }}</small>
+    <div class="card card-dashboard">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-file-alt text-primary me-2"></i>📝 Artículos Encontrados
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="list-group">
+                {% for article in results %}
+                <a href="{% url 'help_center:article_detail' article.slug %}" 
+                   class="list-group-item list-group-item-action glass-effect hover-lift mb-3">
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <div class="flex-grow-1 me-3">
+                            <h5 class="mb-2 text-white">{{ article.title }}</h5>
+                            <p class="mb-2 text-muted">{{ article.content|truncatewords:25 }}</p>
+                            <div class="d-flex flex-wrap gap-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-tag me-1"></i>{{ article.category.name }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-eye me-1"></i>{{ article.view_count }} vistas
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>{{ article.updated_at|date:"d/m/Y" }}
+                                </small>
+                            </div>
+                        </div>
+                        <span class="badge bg-primary">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
             </div>
-            <p class="mb-1">{{ article.content|truncatewords:20 }}</p>
-            <small class="text-muted">{{ article.view_count }} vistas</small>
-        </a>
-        {% endfor %}
+        </div>
     </div>
     {% else %}
-    <div class="alert alert-warning">
-        <h5>No se encontraron resultados</h5>
-        <p class="mb-0">
-            {% if query %}
-            No hay artículos que coincidan con "{{ query }}". 
-            {% else %}
-            Ingresa un término de búsqueda.
-            {% endif %}
-        </p>
-        <div class="mt-3">
-            <a href="{% url 'help_center:help_center' %}" class="btn btn-primary">Volver al Centro de Ayuda</a>
-            <a href="{% url 'help_center:faq_list' %}" class="btn btn-outline-primary">Ver Preguntas Frecuentes</a>
+    <div class="card card-dashboard">
+        <div class="card-body text-center py-5">
+            <div class="cyber-glow mb-4">
+                <i class="fas fa-search fa-4x text-muted"></i>
+            </div>
+            <h4 class="text-white mb-3">🔍 No se encontraron resultados</h4>
+            <p class="text-muted mb-4">
+                {% if query %}
+                No hay artículos que coincidan con "<strong>{{ query }}</strong>".
+                {% else %}
+                Ingresa un término de búsqueda para encontrar artículos de ayuda.
+                {% endif %}
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'help_center:help_center' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-home me-2"></i>🏠 Volver al Centro de Ayuda
+                </a>
+                <a href="{% url 'help_center:faq_list' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-question-circle me-2"></i>❓ Ver Preguntas Frecuentes
+                </a>
+            </div>
+
+            <!-- Sugerencias -->
+            <div class="row mt-5">
+                <div class="col-md-8 mx-auto">
+                    <div class="card glass-effect">
+                        <div class="card-body">
+                            <h6 class="text-gradient mb-3">💡 Sugerencias de búsqueda:</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{% url 'help_center:search_help' %}?q=devolución" class="btn btn-sm btn-outline-primary">devolución</a>
+                                <a href="{% url 'help_center:search_help' %}?q=pago" class="btn btn-sm btn-outline-primary">pago</a>
+                                <a href="{% url 'help_center:search_help' %}?q=envío" class="btn btn-sm btn-outline-primary">envío</a>
+                                <a href="{% url 'help_center:search_help' %}?q=cuenta" class="btn btn-sm btn-outline-primary">cuenta</a>
+                                <a href="{% url 'help_center:search_help' %}?q=garantía" class="btn btn-sm btn-outline-primary">garantía</a>
+                                <a href="{% url 'help_center:search_help' %}?q=pedido" class="btn btn-sm btn-outline-primary">pedido</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     {% endif %}
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

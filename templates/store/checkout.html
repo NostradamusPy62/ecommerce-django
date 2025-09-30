@@ -1,171 +1,240 @@
 {% extends "base.html" %}
-
 {% load humanize %}
-
 {% load static %}
 
 {% block content %}
-
-<section class="section-content padding-y bg">
-
-
+<section class="section-conten padding-y cyber-bg">
     <div class="container">
-
         <!-- ============================ COMPONENT 1 ================================= -->
-
-
         <div class="row">
+            <!-- Billing Address Form -->
             <aside class="col-lg-6">
-                <div class="card">
-
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">Direccion de Facturacion</h4>
-                        <form action="{% url 'place_order' %}" method="POST">
-                            {% csrf_token %}
-                            <div class="form-row">
-
-                                <div class="col form-group">
-                                    <label for="">Nombre</label>
-                                    <input type="text" name="first_name" class="form-control">
-                                </div>
-                                <div class="col form-group">
-                                    <label for="">Apellido</label>
-                                    <input type="text" name="last_name" class="form-control">
-                                </div>
-
-                            </div>
-
-                            <div class="form-row">
-
-                                <div class="col form-group">
-                                    <label for="">Email</label>
-                                    <input type="email" name="email" class="form-control">
-                                </div>
-                                <div class="col form-group">
-                                    <label for="">Telefono</label>
-                                    <input type="text" name="phone" class="form-control">
-                                </div>
-                                <div class="col form-group">
-                                    <label for="">RUC</label>
-                                    <input type="text" name="ruc" class="form-control" placeholder="Ingrese su RUC">
-                                </div>
-
-                            </div>
-
-                            <div class="form-row">
-
-                                <div class="col form-group">
-                                    <label for="">Direccion</label>
-                                    <input type="text" name="addres_line_1" class="form-control">
-                                </div>
-                                <div class="col form-group">
-                                    <label for="">Detalles Direccion</label>
-                                    <input type="text" name="addres_line_2" class="form-control">
-                                </div>
-
-                            </div>
-
-                            <div class="form-row">
-
-                                <div class="col form-group">
-                                    <label for="">Ciudad</label>
-                                    <input type="text" name="city" class="form-control">
-                                </div>
-                                <div class="col form-group">
-                                    <label for="">Departamento</label>
-                                    <input type="text" name="state" class="form-control">
-                                </div>
-                                <div class="col form-group">
-                                    <label for="">Pais</label>
-                                    <input type="text" name="country" class="form-control">
-                                </div>
-
-
-                                <div class="form-row">
-                                    <label for="">Descripcion de la orden</label>
-                                    <textarea name="order_note" rows="2" class="form-control"></textarea>
-                                </div>
-                            </div>
-                        
+                <div class="card glass-effect hover-lift mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0"><i class="fas fa-map-marker-alt me-2 text-primary"></i>📍 Dirección de Facturación</h4>
                     </div>
-
-
-                </div> <!-- card.// -->
-
-            </aside> <!-- col.// -->
-            <aside class="col-lg-6">
-
-                <div class="card">
                     <div class="card-body">
-                        <table class="table table-borderless table-shopping-cart">
-                            <thead class="text-muted">
-                                <tr class="small text-uppercase">
-                                    <th scope="col">Product</th>
-                                    <th scope="col" width="120">Cantidad</th>
-                                    <th scope="col" width="120">Precio</th>
+                        <form action="{% url 'place_order' %}" method="POST" id="checkout-form">
+                            {% csrf_token %}
+                            
+                            <!-- Personal Information -->
+                            <div class="form-section mb-4">
+                                <h6 class="text-primary mb-3">👤 Información Personal</h6>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label class="form-label">Nombre</label>
+                                        <input type="text" name="first_name" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="form-label">Apellido</label>
+                                        <input type="text" name="last_name" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label class="form-label">📧 Email</label>
+                                        <input type="email" name="email" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="form-label">📞 Teléfono</label>
+                                        <input type="text" name="phone" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 form-group">
+                                        <label class="form-label">🏷️ RUC</label>
+                                        <input type="text" name="ruc" class="form-control" placeholder="Ingrese su RUC (Opcional)">
+                                    </div>
+                                </div>
+                            </div>
 
-                                </tr>
-                            </thead>
-                            <tbody>
+                            <!-- Address Information -->
+                            <div class="form-section mb-4">
+                                <h6 class="text-primary mb-3">📍 Información de Dirección</h6>
+                                <div class="row">
+                                    <div class="col-md-8 form-group">
+                                        <label class="form-label">Dirección Principal</label>
+                                        <input type="text" name="addres_line_1" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label class="form-label">Detalles</label>
+                                        <input type="text" name="addres_line_2" class="form-control" placeholder="Opcional">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 form-group">
+                                        <label class="form-label">🏙️ Ciudad</label>
+                                        <input type="text" name="city" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label class="form-label">🗺️ Departamento</label>
+                                        <input type="text" name="state" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label class="form-label">🌎 País</label>
+                                        <input type="text" name="country" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
 
-                                {% for cart_item in cart_items %}
-
-                                <tr>
-                                    <td>
-                                        <figure class="itemside align-items-center">
-                                            <div class="aside"><img src="{{ cart_item.product.images.url }}"
-                                                    class="img-sm">
-                                            </div>
-                                            <figcaption class="info">
-                                                <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
-                                                <p class="text-muted small">
-                                                    {% if cart_item.variations.all %}
-                                                    {% for item in cart_item.variations.all %}
-                                                    {{ item.variation_category }} : {{ item.variation_value }} <br>
-                                                    {% endfor %}
-                                                    {% endif %}
-
-                                                </p>
-                                            </figcaption>
-                                        </figure>
-                                    </td>
-                                    <td>
-
-                                        <label for="">{{ cart_item.quantity }}</label>
-
-                                    </td>
-                                    <td>
-                                        <div class="price-wrap">
-                                            <var class="price">Gs. {{ cart_item.sub_total|intcomma }}</var>
-                                            <small class="text-muted">Gs. {{ cart_item.product.price|intcomma }}
-                                            </small>
-                                        </div> <!-- price-wrap .// -->
-                                    </td>
-                                    
-
-                                </tr>
-
-                                {% endfor %}
-
-                            </tbody>
-                        </table>
-
-
-                        <button href="./place-order.html" class="btn btn-primary btn-block" type="submit"> Ordenar los productos </button>
-                        <a href="{% url 'store' %}" class="btn btn-light btn-block">Continua comprando</a>
-
+                            <!-- Order Notes -->
+                            <div class="form-section">
+                                <h6 class="text-primary mb-3">📝 Notas Adicionales</h6>
+                                <div class="form-group">
+                                    <label class="form-label">Descripción de la Orden</label>
+                                    <textarea name="order_note" rows="3" class="form-control" placeholder="Instrucciones especiales, comentarios, etc..."></textarea>
+                                </div>
+                            </div>
                         </form>
-                    </div> <!-- card-body.// -->
-                </div> <!-- card.// -->
+                    </div>
+                </div>
+            </aside>
 
-            </aside> <!-- col.// -->
+            <!-- Order Summary -->
+            <aside class="col-lg-6">
+                <div class="card glass-effect sticky-top" style="top: 20px;">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-shopping-bag me-2"></i>🛍️ Resumen de tu Pedido</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="order-items">
+                            {% for cart_item in cart_items %}
+                            <div class="order-item mb-3 pb-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <div class="product-image me-3">
+                                        <img src="{{ cart_item.product.images.url }}" 
+                                             class="img-fluid rounded" 
+                                             style="width: 60px; height: 60px; object-fit: cover;"
+                                             alt="{{ cart_item.product.product_name }}">
+                                    </div>
+                                    <div class="product-details flex-grow-1">
+                                        <h6 class="mb-1 product-title">{{ cart_item.product.product_name }}</h6>
+                                        {% if cart_item.variations.all %}
+                                        <div class="variations">
+                                            {% for item in cart_item.variations.all %}
+                                            <small class="badge bg-outline-primary me-1">
+                                                {{ item.variation_category }}: {{ item.variation_value }}
+                                            </small>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        <div class="product-meta mt-1">
+                                            <small class="text-muted">Cantidad: {{ cart_item.quantity }}</small>
+                                            <strong class="text-success float-end">Gs. {{ cart_item.sub_total|intcomma }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
 
-        </div> <!-- row.// -->
+                        <!-- Price Summary -->
+                        <div class="price-summary mt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted">Subtotal:</span>
+                                <strong class="text-primary">Gs. {{ total|intcomma }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted">Impuesto:</span>
+                                <strong class="text-warning">Gs. {{ tax|intcomma }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3 pt-2 border-top">
+                                <span class="h6 text-muted">Total General:</span>
+                                <strong class="h5 text-success">Gs. {{ grand_total|intcomma }}</strong>
+                            </div>
+                        </div>
 
+                        <!-- Action Buttons -->
+                        <div class="action-buttons mt-4">
+                            <button type="submit" form="checkout-form" class="btn btn-primary btn-lg w-100 hover-lift mb-3">
+                                <i class="fas fa-check-circle me-2"></i>✅ Confirmar y Pagar
+                            </button>
+                            <a href="{% url 'store' %}" class="btn btn-outline-primary w-100 hover-lift">
+                                <i class="fas fa-arrow-left me-2"></i>🛒 Continuar Comprando
+                            </a>
+                        </div>
+
+                        <!-- Security Assurance -->
+                        <div class="security-assurance text-center mt-3">
+                            <div class="assurance-item mb-2">
+                                <i class="fas fa-shield-alt text-success me-2"></i>
+                                <small class="text-muted">Pago 100% seguro</small>
+                            </div>
+                            <div class="assurance-item">
+                                <i class="fas fa-truck text-info me-2"></i>
+                                <small class="text-muted">Envío rápido y confiable</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
         <!-- ============================ COMPONENT 1 END .// ================================= -->
-
-    </div> <!-- container .//  -->
+    </div>
 </section>
 
+<style>
+.form-section {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
 
+.form-label {
+    color: var(--cyber-white);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: var(--cyber-white);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--cyber-indigo);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    color: var(--cyber-white);
+}
+
+.product-title {
+    color: var(--cyber-white);
+    font-weight: 600;
+}
+
+.bg-outline-primary {
+    background: transparent !important;
+    border: 1px solid var(--cyber-indigo) !important;
+    color: var(--cyber-indigo) !important;
+}
+
+.security-assurance {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sticky-top {
+    position: sticky;
+    z-index: 10;
+}
+
+@media (max-width: 768px) {
+    .sticky-top {
+        position: relative;
+        top: 0;
+    }
+    
+    .form-section {
+        padding: 1rem;
+    }
+}
+</style>
 {% endblock %}

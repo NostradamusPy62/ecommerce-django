@@ -1,30 +1,42 @@
 {% extends 'admin_panel/base.html' %}
+{% load static %}
 
-{% block title %}Historial de Chat - Panel Admin{% endblock %}
-{% block page_title %}Historial de Chat{% endblock %}
+{% block title %}Historial de Chat - DavBorn Store{% endblock %}
+{% block page_title %}💬 Historial de Chat{% endblock %}
 
 {% block content %}
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Cyber Minimal CSS -->
+<link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <div class="card card-dashboard">
-    <div class="card-header">
-        <h5 class="card-title mb-0">Historial de Conversaciones</h5>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">📋 Historial de Conversaciones</h5>
+        <span class="badge bg-primary">{{ chat_messages.count }} mensajes</span>
     </div>
     <div class="card-body">
         <!-- Filtros -->
         <div class="row mb-4">
-            <div class="col-md-4">
-                <form method="get" class="row g-2">
+            <div class="col-md-6">
+                <form method="get" class="row g-3">
                     <div class="col-md-8">
+                        <label class="form-label">👤 Filtrar por usuario</label>
                         <select name="user" class="form-select">
-                            <option value="">Todos los usuarios</option>
+                            <option value="">👥 Todos los usuarios</option>
                             {% for user in users %}
                             <option value="{{ user.id }}" {% if request.GET.user == user.id|stringformat:"i" %}selected{% endif %}>
-                                {{ user.email }}
+                                📧 {{ user.email }}
                             </option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <button type="submit" class="btn btn-outline-primary w-100">Filtrar</button>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i>🔍 Filtrar
+                        </button>
                     </div>
                 </form>
             </div>
@@ -33,46 +45,115 @@
         <!-- Historial -->
         <div class="chat-history">
             {% for message in chat_messages %}
-            <div class="card mb-3 {% if message.user %}border-primary{% else %}border-secondary{% endif %}">
-                <div class="card-header py-2">
+            <div class="card mb-4 glass-effect hover-lift {% if message.user %}border-cyber{% else %}border-secondary{% endif %}">
+                <div class="card-header py-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
+                        <div class="d-flex align-items-center">
                             {% if message.user %}
-                            <strong class="text-primary">{{ message.user.email }}</strong>
-                            {% if message.user.is_superadmin %}
-                            <span class="badge bg-danger ms-1">SuperAdmin</span>
-                            {% elif message.user.is_admin %}
-                            <span class="badge bg-warning ms-1">Admin</span>
-                            {% elif message.user.is_staff %}
-                            <span class="badge bg-info ms-1">Vendedor</span>
-                            {% endif %}
+                            <div class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                            <div>
+                                <strong class="text-primary">{{ message.user.email }}</strong>
+                                <div class="mt-1">
+                                    {% if message.user.is_superadmin %}
+                                    <span class="badge bg-danger">👑 SuperAdmin</span>
+                                    {% elif message.user.is_admin %}
+                                    <span class="badge bg-warning">🛡️ Admin</span>
+                                    {% elif message.user.is_staff %}
+                                    <span class="badge bg-info">📊 Vendedor</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">👤 Cliente</span>
+                                    {% endif %}
+                                </div>
+                            </div>
                             {% else %}
-                            <strong class="text-muted">Anónimo ({{ message.session_key }})</strong>
+                            <div class="avatar-sm bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-user-secret text-white"></i>
+                            </div>
+                            <div>
+                                <strong class="text-muted">👤 Anónimo</strong>
+                                <div class="mt-1">
+                                    <small class="text-muted">{{ message.session_key|truncatechars:15 }}</small>
+                                </div>
+                            </div>
                             {% endif %}
                         </div>
-                        <small class="text-muted">{{ message.timestamp|date:"d/m/Y H:i" }}</small>
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>{{ message.timestamp|date:"d/m/Y H:i" }}
+                        </small>
                     </div>
                 </div>
                 <div class="card-body py-3">
                     <div class="row">
-                        <div class="col-md-6 border-end">
-                            <p class="mb-1"><strong>Usuario:</strong></p>
-                            <p class="text-dark">{{ message.user_message }}</p>
+                        <div class="col-md-6 border-end border-cyber">
+                            <p class="mb-2"><strong>💬 Usuario:</strong></p>
+                            <div class="bg-dark rounded p-3">
+                                <p class="mb-0 text-white">{{ message.user_message }}</p>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <p class="mb-1"><strong>Asistente:</strong></p>
-                            <p class="text-success">{{ message.bot_response|linebreaks }}</p>
+                            <p class="mb-2"><strong>🤖 Asistente:</strong></p>
+                            <div class="bg-primary bg-opacity-10 rounded p-3">
+                                <p class="mb-0 text-success">{{ message.bot_response|linebreaks }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div class="text-center py-4">
-                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                <p class="text-muted">No hay historial de chat disponible</p>
+            <div class="text-center py-5">
+                <div class="cyber-glow mb-4">
+                    <i class="fas fa-comments fa-4x text-muted"></i>
+                </div>
+                <h4 class="text-white mb-3">📭 No hay historial de chat disponible</h4>
+                <p class="text-muted">Los mensajes del chat aparecerán aquí cuando los usuarios interactúen con el asistente.</p>
             </div>
             {% endfor %}
         </div>
+
+        <!-- Estadísticas -->
+        {% if chat_messages %}
+        <div class="row mt-4 pt-4 border-top">
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-gradient">{{ total_messages }}</h3>
+                        <p class="text-muted mb-0">Total Mensajes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">{{ unique_users }}</h3>
+                        <p class="text-muted mb-0">Usuarios Únicos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-warning">{{ today_messages }}</h3>
+                        <p class="text-muted mb-0">Hoy</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-info">{{ anonymous_messages }}</h3>
+                        <p class="text-muted mb-0">Anónimos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

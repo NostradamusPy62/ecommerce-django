@@ -1,45 +1,88 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}{{ article.title }} - Ayuda{% endblock %}
+{% block title %}{{ article.title }} - Ayuda - DavBorn Store{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Cyber Minimal CSS -->
+<link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<div class="container mt-4 cyber-bg" style="min-height: 100vh;">
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'help_center:help_center' %}">Ayuda</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'help_center:category_detail' article.category.id %}">{{ article.category.name }}</a></li>
-            <li class="breadcrumb-item active">{{ article.title }}</li>
+        <ol class="breadcrumb glass-effect px-3 py-2 rounded">
+            <li class="breadcrumb-item">
+                <a href="{% url 'help_center:help_center' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>🏠 Ayuda
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'help_center:category_detail' article.category.id %}" class="text-decoration-none">
+                    📂 {{ article.category.name }}
+                </a>
+            </li>
+            <li class="breadcrumb-item active text-white">{{ article.title|truncatewords:5 }}</li>
         </ol>
     </nav>
 
-    <article class="card">
+    <article class="card card-dashboard">
         <div class="card-body">
-            <h1 class="card-title">{{ article.title }}</h1>
-            <div class="text-muted mb-3">
-                <small>
-                    Categoría: {{ article.category.name }} | 
-                    Vistas: {{ article.view_count }} | 
-                    Actualizado: {{ article.updated_at|date:"d/m/Y" }}
-                </small>
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <h1 class="card-title text-gradient mb-0">{{ article.title }}</h1>
+                <div class="text-end">
+                    <span class="badge bg-primary fs-6">
+                        <i class="fas fa-eye me-1"></i>{{ article.view_count }} vistas
+                    </span>
+                </div>
+            </div>
+            
+            <div class="text-muted mb-4">
+                <div class="d-flex flex-wrap gap-3">
+                    <small>
+                        <i class="fas fa-tag me-1"></i>📂 {{ article.category.name }}
+                    </small>
+                    <small>
+                        <i class="fas fa-calendar me-1"></i>📅 Actualizado: {{ article.updated_at|date:"d/m/Y" }}
+                    </small>
+                    <small>
+                        <i class="fas fa-user-edit me-1"></i>✍️ Por: {{ article.author|default:"Equipo DavBorn" }}
+                    </small>
+                </div>
             </div>
             
             <div class="article-content mt-4">
-                {{ article.content|linebreaks }}
+                <div class="glass-effect rounded p-4">
+                    {{ article.content|linebreaks }}
+                </div>
             </div>
         </div>
     </article>
     
     <!-- Artículos relacionados -->
     {% if related_articles %}
-    <div class="card mt-4">
+    <div class="card card-dashboard mt-4">
         <div class="card-header">
-            <h5>Artículos relacionados</h5>
+            <h5 class="card-title mb-0">
+                <i class="fas fa-link text-primary me-2"></i>🔗 Artículos relacionados
+            </h5>
         </div>
         <div class="card-body">
             <div class="list-group">
                 {% for related in related_articles %}
-                <a href="{% url 'help_center:article_detail' related.slug %}" class="list-group-item list-group-item-action">
-                    {{ related.title }}
+                <a href="{% url 'help_center:article_detail' related.slug %}" 
+                   class="list-group-item list-group-item-action glass-effect hover-lift mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 text-white">{{ related.title }}</h6>
+                            <small class="text-muted">{{ related.category.name }}</small>
+                        </div>
+                        <span class="badge bg-primary">
+                            <i class="fas fa-eye me-1"></i>{{ related.view_count }}
+                        </span>
+                    </div>
                 </a>
                 {% endfor %}
             </div>
@@ -48,13 +91,45 @@
     {% endif %}
     
     <!-- Navegación -->
-    <div class="mt-4 d-flex justify-content-between">
-        <a href="{% url 'help_center:category_detail' article.category.id %}" class="btn btn-outline-primary">
-            ← Volver a {{ article.category.name }}
+    <div class="mt-4 d-flex justify-content-between align-items-center">
+        <a href="{% url 'help_center:category_detail' article.category.id %}" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i>↩️ Volver a {{ article.category.name }}
         </a>
-        <a href="{% url 'help_center:help_center' %}" class="btn btn-outline-secondary">
-            🏠 Centro de Ayuda
+        <a href="{% url 'help_center:help_center' %}" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-home me-2"></i>🏠 Centro de Ayuda
         </a>
     </div>
+
+    <!-- Calificación del artículo -->
+    <div class="card card-dashboard mt-4">
+        <div class="card-body text-center">
+            <h5 class="text-gradient mb-3">¿Te resultó útil este artículo?</h5>
+            <div class="d-flex justify-content-center gap-3">
+                <button class="btn btn-success hover-lift" onclick="rateArticle('helpful')">
+                    <i class="fas fa-thumbs-up me-2"></i>👍 Sí, fue útil
+                </button>
+                <button class="btn btn-danger hover-lift" onclick="rateArticle('not_helpful')">
+                    <i class="fas fa-thumbs-down me-2"></i>👎 No fue útil
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function rateArticle(rating) {
+    // Aquí puedes implementar la lógica para guardar la calificación
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(btn => btn.disabled = true);
+    
+    const message = rating === 'helpful' ? 
+        '¡Gracias por tu feedback! 👍' : 
+        'Lamentamos que no te haya sido útil. Mejoraremos el contenido. 👎';
+    
+    alert(message);
+}
+</script>
 {% endblock %}

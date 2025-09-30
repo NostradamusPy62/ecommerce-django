@@ -1,45 +1,53 @@
 {% extends 'admin_panel/base.html' %}
 {% load humanize %}
+{% load static %}
 
-{% block title %}Dashboard - Panel Admin{% endblock %}
-{% block page_title %}Dashboard{% endblock %}
+{% block title %}📊 Dashboard - DavBorn Store{% endblock %}
+{% block page_title %}📊 Dashboard{% endblock %}
 
 {% block content %}
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Cyber Minimal CSS -->
+<link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <div class="row">
     <!-- Métricas principales -->
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card card-dashboard bg-primary text-white stat-card">
+        <div class="card-dashboard stat-card bg-primary">
             <div class="card-body">
                 <i class="fas fa-box"></i>
-                <h5>{{ total_products }}</h5>
-                <p>Productos</p>
+                <h3 class="text-white">{{ total_products }}</h3>
+                <p class="mb-0">📦 Productos</p>
             </div>
         </div>
     </div>
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card card-dashboard bg-success text-white stat-card">
+        <div class="card-dashboard stat-card bg-success">
             <div class="card-body">
                 <i class="fas fa-tags"></i>
-                <h5>{{ total_categories }}</h5>
-                <p>Categorías</p>
+                <h3 class="text-white">{{ total_categories }}</h3>
+                <p class="mb-0">📂 Categorías</p>
             </div>
         </div>
     </div>
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card card-dashboard bg-warning text-white stat-card">
+        <div class="card-dashboard stat-card bg-warning">
             <div class="card-body">
                 <i class="fas fa-shopping-cart"></i>
-                <h5>{{ total_orders }}</h5>
-                <p>Pedidos</p>
+                <h3 class="text-white">{{ total_orders }}</h3>
+                <p class="mb-0">🛒 Pedidos</p>
             </div>
         </div>
     </div>
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card card-dashboard bg-danger text-white stat-card">
+        <div class="card-dashboard stat-card bg-danger">
             <div class="card-body">
                 <i class="fas fa-users"></i>
-                <h5>{{ total_users }}</h5>
-                <p>Usuarios</p>
+                <h3 class="text-white">{{ total_users }}</h3>
+                <p class="mb-0">👥 Usuarios</p>
             </div>
         </div>
     </div>
@@ -51,12 +59,16 @@
         <div class="card card-dashboard">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="fas fa-chart-line text-primary"></i> Ventas del Mes
+                    <i class="fas fa-chart-line text-primary me-2"></i>💰 Ventas del Mes
                 </h5>
             </div>
-            <div class="card-body">
-                <h2 class="text-success">Gs. {{ monthly_sales|floatformat:0|intcomma }}</h2>
+            <div class="card-body text-center">
+                <h2 class="text-gradient">Gs. {{ monthly_sales|floatformat:0|intcomma }}</h2>
                 <p class="text-muted">Total de ventas completadas este mes</p>
+                <div class="progress mt-3" style="height: 8px;">
+                    <div class="progress-bar bg-success" style="width: {{ sales_percentage }}%"></div>
+                </div>
+                <small class="text-muted">{{ sales_percentage }}% del objetivo mensual</small>
             </div>
         </div>
     </div>
@@ -66,14 +78,14 @@
         <div class="card card-dashboard">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="fas fa-clipboard-list text-info"></i> Estado de Pedidos
+                    <i class="fas fa-clipboard-list text-info me-2"></i>📊 Estado de Pedidos
                 </h5>
             </div>
             <div class="card-body">
                 {% for stat in order_status_stats %}
-                <div class="d-flex justify-content-between mb-2">
-                    <span>{{ stat.status }}</span>
-                    <span class="badge bg-primary">{{ stat.count }}</span>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-white">{{ stat.status }}</span>
+                    <span class="badge bg-primary fs-6">{{ stat.count }}</span>
                 </div>
                 {% endfor %}
             </div>
@@ -87,7 +99,7 @@
         <div class="card card-dashboard">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">
-                    <i class="fas fa-clock text-warning"></i> Pedidos Recientes
+                    <i class="fas fa-clock text-warning me-2"></i>🕒 Pedidos Recientes
                 </h5>
                 <a href="{% url 'admin_panel:order_list' %}" class="btn btn-sm btn-primary">Ver Todos</a>
             </div>
@@ -96,36 +108,39 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th># Pedido</th>
-                                <th>Cliente</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th>Fecha</th>
+                                <th>🔢 # Pedido</th>
+                                <th>👤 Cliente</th>
+                                <th>💰 Total</th>
+                                <th>📊 Estado</th>
+                                <th>📅 Fecha</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for order in recent_orders %}
-                            <tr>
+                            <tr class="hover-lift">
                                 <td>
-                                    <a href="{% url 'admin_panel:order_detail' order.id %}" class="text-decoration-none">
+                                    <a href="{% url 'admin_panel:order_detail' order.id %}" class="text-decoration-none text-black">
                                         #{{ order.order_number }}
                                     </a>
                                 </td>
                                 <td>{{ order.full_name }}</td>
-                                <td>Gs. {{ order.order_total|floatformat:0|intcomma }}</td>
+                                <td class="text-success">Gs. {{ order.order_total|floatformat:0|intcomma }}</td>
                                 <td>
-                                    <span class="badge 
+                                    <span class="badge fs-6 
                                         {% if order.status == 'Completed' %}bg-success
                                         {% elif order.status == 'Cancelled' %}bg-danger
-                                        {% else %}bg-warning{% endif %}">
+                                        {% else %}bg-warning text-dark{% endif %}">
                                         {{ order.status }}
                                     </span>
                                 </td>
-                                <td>{{ order.created_at|date:"d/m/Y" }}</td>
+                                <td><small class="text-muted">{{ order.created_at|date:"d/m/Y" }}</small></td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="5" class="text-center">No hay pedidos recientes</td>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    <i class="fas fa-shopping-cart fa-2x mb-3"></i>
+                                    <p>No hay pedidos recientes</p>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -140,21 +155,24 @@
         <div class="card card-dashboard">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">
-                    <i class="fas fa-exclamation-triangle text-danger"></i> Bajo Stock
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>⚠️ Bajo Stock
                 </h5>
                 <a href="{% url 'admin_panel:product_list' %}?stock=low" class="btn btn-sm btn-outline-danger">Ver Todos</a>
             </div>
             <div class="card-body">
                 {% for product in low_stock_products %}
-                <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 border-cyber rounded hover-lift">
                     <div>
-                        <h6 class="mb-1">{{ product.product_name }}</h6>
-                        <small class="text-muted">{{ product.category.category_name }}</small>
+                        <h6 class="mb-1 text-white">{{ product.product_name }}</h6>
+                        <small class="text-muted" style="color: white;">{{ product.category.category_name }}</small>
                     </div>
-                    <span class="badge bg-danger">{{ product.stock }} unidades</span>
+                    <span class="badge bg-danger fs-6">{{ product.stock }} unidades</span>
                 </div>
                 {% empty %}
-                <p class="text-center text-muted">No hay productos con bajo stock</p>
+                <div class="text-center text-muted py-3">
+                    <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                    <p>¡Excelente! No hay productos con bajo stock</p>
+                </div>
                 {% endfor %}
             </div>
         </div>
@@ -168,29 +186,29 @@
         <div class="card card-dashboard">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="fas fa-bolt text-success"></i> Acciones Rápidas
+                    <i class="fas fa-bolt text-success me-2"></i>⚡ Acciones Rápidas
                 </h5>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3 mb-2">
-                        <a href="{% url 'admin_panel:product_add' %}" class="btn btn-outline-primary w-100">
-                            <i class="fas fa-plus"></i> Nuevo Producto
+                        <a href="{% url 'admin_panel:product_add' %}" class="btn btn-outline-primary w-100 hover-lift">
+                            <i class="fas fa-plus me-2"></i>➕ Nuevo Producto
                         </a>
                     </div>
                     <div class="col-md-3 mb-2">
-                        <a href="{% url 'admin_panel:category_add' %}" class="btn btn-outline-success w-100">
-                            <i class="fas fa-tag"></i> Nueva Categoría
+                        <a href="{% url 'admin_panel:category_add' %}" class="btn btn-outline-success w-100 hover-lift">
+                            <i class="fas fa-tag me-2"></i>📂 Nueva Categoría
                         </a>
                     </div>
                     <div class="col-md-3 mb-2">
-                        <a href="{% url 'admin_panel:sales_report' %}" class="btn btn-outline-info w-100">
-                            <i class="fas fa-chart-bar"></i> Ver Reportes
+                        <a href="{% url 'admin_panel:sales_report' %}" class="btn btn-outline-info w-100 hover-lift">
+                            <i class="fas fa-chart-bar me-2"></i>📈 Ver Reportes
                         </a>
                     </div>
                     <div class="col-md-3 mb-2">
-                        <a href="{% url 'admin_panel:chat_history' %}" class="btn btn-outline-warning w-100">
-                            <i class="fas fa-comments"></i> Historial Chat
+                        <a href="{% url 'admin_panel:chat_history' %}" class="btn btn-outline-warning w-100 hover-lift">
+                            <i class="fas fa-comments me-2"></i>💬 Historial Chat
                         </a>
                     </div>
                 </div>
@@ -199,4 +217,7 @@
     </div>
 </div>
 {% endif %}
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

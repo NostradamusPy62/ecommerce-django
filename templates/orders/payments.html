@@ -3,111 +3,201 @@
 {% load static %}
 
 {% block content %}
-<section class="section-content padding-y bg">
+<section class="section-conten padding-y cyber-bg">
     <div class="container">
         <div class="row">
-            <aside class="col-lg-8">
-                <!-- Dirección de Facturación -->
-                <div class="card">
-                    <h5 class="card-header">Dirección de Facturación</h5>
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Page Header -->
+                <div class="card glass-effect hover-lift mb-4">
+                    <div class="card-body text-center">
+                        <h1 class="text-gradient mb-2">💳 Proceso de Pago</h1>
+                        <p class="text-muted">Completa tu compra de forma segura</p>
+                    </div>
+                </div>
+
+                <!-- Billing Address -->
+                <div class="card glass-effect hover-lift mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2 text-primary"></i>📍 Dirección de Facturación</h5>
+                    </div>
                     <div class="card-body">
-                        <p class="card-text mb-0">{{ order.full_name }}</p>
-                        <p class="card-text mb-0">{{ order.full_address }}</p>
-                        <p class="card-text mb-0">{{ order.city }}</p>
-                        <p class="card-text mb-0">{{ order.state }}</p>
-                        <p class="card-text mb-0">{{ order.country }}</p>
-                        <p class="card-text mb-0">{{ order.email }}</p>
-                        <p class="card-text mb-0">{{ order.phone }}</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-item mb-3">
+                                    <strong class="text-primary">👤 Nombre:</strong>
+                                    <p class="mb-0">{{ order.full_name }}</p>
+                                </div>
+                                <div class="info-item mb-3">
+                                    <strong class="text-primary">📧 Email:</strong>
+                                    <p class="mb-0">{{ order.email }}</p>
+                                </div>
+                                <div class="info-item mb-3">
+                                    <strong class="text-primary">📞 Teléfono:</strong>
+                                    <p class="mb-0">{{ order.phone }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item mb-3">
+                                    <strong class="text-primary">📍 Dirección:</strong>
+                                    <p class="mb-0">{{ order.full_address }}</p>
+                                </div>
+                                <div class="info-item mb-3">
+                                    <strong class="text-primary">🏙️ Ciudad/Estado:</strong>
+                                    <p class="mb-0">{{ order.city }}, {{ order.state }}</p>
+                                </div>
+                                <div class="info-item mb-3">
+                                    <strong class="text-primary">🌎 País:</strong>
+                                    <p class="mb-0">{{ order.country }}</p>
+                                </div>
+                            </div>
+                        </div>
                         {% if order.order_note %}
-                        <b>Detalle de la Orden:</b> {{ order.order_note }}
+                        <div class="order-note glass-effect p-3 mt-3">
+                            <strong class="text-warning">📝 Nota de la Orden:</strong>
+                            <p class="mb-0 mt-1">{{ order.order_note }}</p>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
 
-                <!-- Método de Pago -->
-                <div class="card">
-                    <h5 class="card-header">Método de Pago</h5>
+                <!-- Payment Method -->
+                <div class="card glass-effect hover-lift mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-credit-card me-2 text-primary"></i>💳 Método de Pago</h5>
+                    </div>
                     <div class="card-body">
-                        <p class="card-text">Paypal</p>
+                        <div class="payment-method-selected">
+                            <div class="d-flex align-items-center">
+                                <i class="fab fa-paypal fa-2x text-primary me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">PayPal</h6>
+                                    <p class="text-muted mb-0">Pago seguro a través de PayPal</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Revisión de Productos -->
-                <div class="card">
-                    <h5 class="card-header">Revisión de Productos</h5>
+                <!-- Products Review -->
+                <div class="card glass-effect hover-lift">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-shopping-bag me-2 text-primary"></i>🛍️ Revisión de Productos</h5>
+                    </div>
                     <div class="card-body">
-                        <table class="table table-borderless table-shopping-cart">
-                            <thead class="text-muted">
-                                <tr class="small text-uppercase">
-                                    <th scope="col">Producto</th>
-                                    <th scope="col" width="120">Cantidad</th>
-                                    <th scope="col" width="120">Precio</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for cart_item in cart_items %}
-                                <tr>
-                                    <td>
-                                        <figure class="itemside align-items-center">
-                                            <div class="aside"><img src="{{ cart_item.product.images.url }}" class="img-sm"></div>
-                                            <figcaption class="info">
-                                                <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
-                                                <p class="text-muted small">
-                                                    {% for item in cart_item.variations.all %}
-                                                    {{ item.variation_category }} : {{ item.variation_value }} <br>
-                                                    {% endfor %}
-                                                </p>
-                                            </figcaption>
-                                        </figure>
-                                    </td>
-                                    <td>{{ cart_item.quantity }}</td>
-                                    <td>
-                                        <div class="price-wrap">
-                                            <var class="price">Gs. {{ cart_item.sub_total|intcomma }}</var>
-                                            <small class="text-muted">Gs. {{ cart_item.product.price|intcomma }}</small>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col">Producto</th>
+                                        <th scope="col" width="100">Cantidad</th>
+                                        <th scope="col" width="120">Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cart_item in cart_items %}
+                                    <tr class="hover-lift">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="product-image me-3">
+                                                    <img src="{{ cart_item.product.images.url }}" 
+                                                         class="img-fluid rounded" 
+                                                         style="width: 60px; height: 60px; object-fit: cover;">
+                                                </div>
+                                                <div>
+                                                    <a href="{{ cart_item.product.get_url }}" 
+                                                       class="text-decoration-none product-title">
+                                                        {{ cart_item.product.product_name }}
+                                                    </a>
+                                                    {% if cart_item.variations.all %}
+                                                    <div class="variations mt-1">
+                                                        {% for item in cart_item.variations.all %}
+                                                        <small class="badge bg-outline-primary me-1">
+                                                            {{ item.variation_category }}: {{ item.variation_value }}
+                                                        </small>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary rounded-pill">{{ cart_item.quantity }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="price-info">
+                                                <div class="price fw-bold text-success">
+                                                    Gs. {{ cart_item.sub_total|intcomma }}
+                                                </div>
+                                                <small class="text-muted">
+                                                    Gs. {{ cart_item.product.price|intcomma }} c/u
+                                                </small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </aside>
+            </div>
 
-            <!-- Resumen de Pago -->
+            <!-- Payment Summary -->
             <aside class="col-lg-4">
-                <div class="card">
+                <div class="card glass-effect sticky-top" style="top: 20px;">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>📊 Resumen de Pago</h5>
+                    </div>
                     <div class="card-body">
-                        <dl class="dlist-align">
-                            <dt>Precio Total:</dt>
-                            <dd class="text-right">Gs. {{ total|intcomma }}</dd>
-                        </dl>
-                        <dl class="dlist-align">
-                            <dt>Impuesto:</dt>
-                            <dd class="text-right">Gs. {{ tax|intcomma }}</dd>
-                        </dl>
-                        <dl class="dlist-align">
-                            <dt>Total:</dt>
-                            <dd class="text-right text-dark b"><strong>Gs. {{ grand_total|intcomma }}</strong></dd>
-                        </dl>
-                        <dl class="dlist-align">
-                            <dt>Total en USD:</dt>
-                            <dd class="text-right text-dark b">
-                                <strong>$ {{ usd_total }}</strong>
-                                <small class="text-muted">(Cambio: 1 USD = 7150 Gs.)</small>
-                            </dd>
-                        </dl>
+                        <!-- Price Breakdown -->
+                        <div class="price-breakdown mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted">Precio Total:</span>
+                                <strong class="text-primary">Gs. {{ total|intcomma }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted">Impuesto:</span>
+                                <strong class="text-warning">Gs. {{ tax|intcomma }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                                <span class="text-muted">Total:</span>
+                                <strong class="h5 text-success">Gs. {{ grand_total|intcomma }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <span class="text-muted">Total en USD:</span>
+                                <strong class="h6 text-info">$ {{ usd_total }}</strong>
+                            </div>
+                            <div class="exchange-rate text-center">
+                                <small class="text-muted">
+                                    💱 Tipo de cambio: 1 USD = 7,150 Gs.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Payment Logos -->
+                        <div class="payment-logos text-center mb-4">
+                            <p class="text-muted small mb-2">Métodos de pago aceptados</p>
+                            <img src="{% static 'images/misc/payments.png' %}" class="img-fluid" style="max-height: 30px;">
+                        </div>
 
                         <hr>
-                        <p class="text-center mb-3">
-                            <img src="{% static 'images/misc/payments.png' %}" height="26">
-                        </p>
 
-                        <!-- Contenedor PayPal -->
-                        <div id="paypal-button-container"></div>
-                        <br>
-                        <button id="simular-pago" class="btn btn-success mt-3">Pago (simulador)</button>
+                        <!-- PayPal Button Container -->
+                        <div id="paypal-button-container" class="mb-3"></div>
+                        
+                        <!-- Simulator Button -->
+                        <button id="simular-pago" class="btn btn-success btn-lg w-100 hover-lift">
+                            <i class="fas fa-bolt me-2"></i>⚡ Pago Rápido (Simulador)
+                        </button>
+
+                        <!-- Security Notice -->
+                        <div class="security-notice text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-lock me-1"></i>
+                                Pago 100% seguro y encriptado
+                            </small>
+                        </div>
                     </div>
                 </div>
             </aside>
@@ -115,7 +205,7 @@
     </div>
 </section>
 
-<!-- SDK de PayPal -->
+<!-- PayPal SDK -->
 <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD"></script>
 
 <script>
@@ -140,8 +230,14 @@ const orderID = "{{ order.order_number }}";
 const payment_method = 'PayPal';
 var redirect_url = "{% url 'order_complete' order.order_number %}";
 
-/* ---------------- BOTÓN PAYPAL REAL ---------------- */
+/* ---------------- PAYPAL BUTTON ---------------- */
 paypal.Buttons({
+    style: {
+        layout: 'vertical',
+        color:  'blue',
+        shape:  'rect',
+        label:  'paypal'
+    },
     createOrder: function(data, actions) {
         return fetch("{% url 'paypal_create_order' %}", {
             method: "POST",
@@ -161,10 +257,12 @@ paypal.Buttons({
         })
         .then(res => res.json())
         .then(orderData => {
-            // Guardar Payment en tu backend
             return fetch(url, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "X-CSRFToken": csrf_token },
+                headers: { 
+                    "Content-Type": "application/json", 
+                    "X-CSRFToken": csrf_token 
+                },
                 body: JSON.stringify({
                     orderID: orderID,
                     transID: orderData.id,
@@ -175,25 +273,38 @@ paypal.Buttons({
         })
         .then(res => res.json())
         .then(data => {
-            console.log("Pago PayPal guardado:", data);
-            window.location.href = "{% url 'order_complete' order.order_number %}";
-            window.location.href = redirect_url + '?order_number='+data.order_number+'&payment_id'+data.transID;
+            console.log("✅ Pago PayPal procesado:", data);
+            window.location.href = redirect_url + '?order_number='+data.order_number+'&payment_id='+data.transID;
         })
         .catch(err => {
-            console.error("Error guardando pago PayPal:", err);
-            alert("Hubo un error guardando el pago. Revisa la consola.");
+            console.error("❌ Error en pago PayPal:", err);
+            alert("⚠️ Hubo un error procesando el pago. Por favor intenta nuevamente.");
         });
+    },
+    onError: function(err) {
+        console.error('❌ Error PayPal:', err);
+        alert('⚠️ Ocurrió un error con PayPal. Por favor intenta con otro método.');
     }
 }).render("#paypal-button-container");
 
-/* ---------------- BOTÓN SIMULADOR ---------------- */
+/* ---------------- SIMULATOR BUTTON ---------------- */
 document.getElementById("simular-pago").addEventListener("click", function() {
-    const transID = "SIMULATED-" + Date.now();
+    const button = this;
+    const originalText = button.innerHTML;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>🔄 Procesando...';
+    button.disabled = true;
+    
+    const transID = "SIM-" + Date.now();
     const status = "COMPLETED";
 
     fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "X-CSRFToken": csrf_token },
+        headers: { 
+            "Content-Type": "application/json", 
+            "X-CSRFToken": csrf_token 
+        },
         body: JSON.stringify({
             orderID: orderID,
             transID: transID,
@@ -203,14 +314,68 @@ document.getElementById("simular-pago").addEventListener("click", function() {
     })
     .then(res => res.json())
     .then(data => {
-        console.log("Pago simulado guardado:", data);
-        // Redirigir pasando order_number y transID
-        window.location.href = redirect_url + '?order_number=' + data.order_number + '&payment_id=' + data.transID;
+        console.log("✅ Pago simulado exitoso:", data);
+        // Add success animation
+        button.innerHTML = '<i class="fas fa-check me-2"></i>✅ ¡Éxito!';
+        button.classList.remove('btn-success');
+        button.classList.add('btn-primary');
+        
+        // Redirect after short delay
+        setTimeout(() => {
+            window.location.href = redirect_url + '?order_number=' + data.order_number + '&payment_id=' + data.transID;
+        }, 1000);
     })
     .catch(err => {
-        console.error("No se pudo guardar el pago simulado:", err);
-        alert("No se pudo completar la simulación del pago. Revisa la consola.");
+        console.error("❌ Error en pago simulado:", err);
+        button.innerHTML = originalText;
+        button.disabled = false;
+        alert("❌ No se pudo completar la simulación del pago. Revisa la consola.");
     });
 });
 </script>
+
+<style>
+.product-title {
+    color: var(--cyber-white);
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.product-title:hover {
+    color: var(--cyber-indigo);
+}
+
+.price-info {
+    text-align: right;
+}
+
+.sticky-top {
+    position: sticky;
+    z-index: 10;
+}
+
+.security-notice {
+    padding: 10px;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid var(--cyber-emerald);
+}
+
+.order-note {
+    border-left: 4px solid var(--cyber-amber);
+}
+
+.bg-outline-primary {
+    background: transparent !important;
+    border: 1px solid var(--cyber-indigo) !important;
+    color: var(--cyber-indigo) !important;
+}
+
+@media (max-width: 768px) {
+    .sticky-top {
+        position: relative;
+        top: 0;
+    }
+}
+</style>
 {% endblock %}

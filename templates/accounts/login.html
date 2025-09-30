@@ -4,51 +4,356 @@
 
 {% block content %}
 
-<!-- ========================= SECTION CONTENT ========================= -->
-<section class="section-conten padding-y" style="min-height:84vh">
+<!-- ========================= SECTION CONTENT CYBER ========================= -->
+<section class="section-conten padding-y cyber-auth-section" style="min-height:84vh">
     {% if request.GET.command == 'verification' %}
-      <div class="container mx-auto alert-info" role="alert" style="max-width=380px; margin-top=100px;">
-
-        Muchas gracias por registrarte en nuestro portal XdLand, te hemos enviado un email para confirmar tu cuenta [{{ request.GET.email }}]
-        <br><br>
-        Si ya verificaste tu cuenta, puedes ir al login <a href="{% url 'login' %}">Login</a>
-
-      </div>
-
-
-      {% else %}
-    <!-- ============================ COMPONENT LOGIN   ================================= -->
-        <div class="card mx-auto" style="max-width: 380px; margin-top:100px;">
-            <br>
-            {% include 'includes/alerts.html' %}
-          <div class="card-body">
-          <h4 class="card-title mb-4">Login</h4>
-          <form action="{% url 'login' %}" method="POST">
-            {% csrf_token %}
-              <div class="form-group">
-                 <input type="email" class="form-control" placeholder="Email" name="email">
-              </div> <!-- form-group// -->
-              <div class="form-group">
-                <input type="password" class="form-control" placeholder="Password" name="password">
-              </div> <!-- form-group// -->
-              
-              <div class="form-group">
-                  <a href="{% url 'forgotPassword' %}" class="float-right">Olvidaste tu password?</a> 
-               
-              </div> <!-- form-group form-check .// -->
-              <div class="form-group">
-                  <button type="submit" class="btn btn-primary btn-block"> Login  </button>
-              </div> <!-- form-group// -->    
-          </form>
-          </div> <!-- card-body.// -->
-        </div> <!-- card .// -->
-    
-         <p class="text-center mt-4">No tienes una cuenta? <a href="{% url 'register' %}">Registrate</a></p>
-         <br><br>
-    <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
+    <div class="container">
+        <div class="cyber-verification-card glass-effect text-center reveal-up">
+            <div class="cyber-verification-icon mb-4">
+                <i class="fas fa-envelope-open-text fa-3x text-primary"></i>
+            </div>
+            <h3 class="cyber-verification-title">📧 Verificación Requerida</h3>
+            <p class="cyber-verification-text">
+                Muchas gracias por registrarte en <strong>DavBorn Store</strong>. 
+                Te hemos enviado un email de verificación a:
+            </p>
+            <div class="cyber-email-highlight">
+                {{ request.GET.email }}
+            </div>
+            <p class="cyber-verification-text mt-3">
+                Por favor revisa tu bandeja de entrada y haz clic en el enlace de verificación.
+            </p>
+            <div class="cyber-verification-actions mt-4">
+                <a href="{% url 'login' %}" class="btn btn-primary cyber-auth-btn">
+                    <i class="fas fa-sign-in-alt me-2"></i>Ir al Login
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- ============================ COMPONENT LOGIN CYBER ================================= -->
+    <div class="container">
+        <div class="cyber-auth-container">
+            <div class="cyber-auth-card glass-effect reveal-up">
+                <div class="card-body cyber-auth-card-body">
+                    <div class="cyber-auth-header text-center mb-4">
+                        <div class="cyber-auth-icon mb-3">
+                            <i class="fas fa-user-lock fa-2x text-gradient"></i>
+                        </div>
+                        <h4 class="cyber-auth-title">🔐 Iniciar Sesión</h4>
+                        <p class="cyber-auth-subtitle">Accede a tu cuenta DavBorn Store</p>
+                    </div>
+                    
+                    {% include 'includes/alerts.html' %}
+                    
+                    <form action="{% url 'login' %}" method="POST" class="cyber-auth-form">
+                        {% csrf_token %}
+                        <div class="form-group cyber-form-group">
+                            <label class="cyber-form-label">📧 Email</label>
+                            <div class="cyber-input-group">
+                                <i class="fas fa-envelope cyber-input-icon"></i>
+                                <input type="email" class="form-control cyber-form-input" placeholder="tu@email.com" name="email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group cyber-form-group">
+                            <label class="cyber-form-label">🔒 Contraseña</label>
+                            <div class="cyber-input-group">
+                                <i class="fas fa-lock cyber-input-icon"></i>
+                                <input type="password" class="form-control cyber-form-input" placeholder="Tu contraseña" name="password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group cyber-form-group">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="cyber-form-check">
+                                    <input type="checkbox" class="cyber-checkbox" id="rememberMe">
+                                    <label class="cyber-checkbox-label" for="rememberMe">
+                                        Recordarme
+                                    </label>
+                                </div>
+                                <a href="{% url 'forgotPassword' %}" class="cyber-forgot-link">
+                                    ¿Olvidaste tu contraseña?
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group cyber-form-group">
+                            <button type="submit" class="btn btn-primary btn-block cyber-auth-btn">
+                                <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="cyber-auth-divider">
+                        <span>¿Primera vez aquí?</span>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="cyber-auth-footer">
+                            ¿No tienes una cuenta? 
+                            <a href="{% url 'register' %}" class="cyber-auth-link">Regístrate aquí</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endif %}
-    
-    </section>
-    <!-- ========================= SECTION CONTENT END// ========================= -->
+</section>
 
+<style>
+/* Auth Section */
+.cyber-auth-section {
+    background: linear-gradient(135deg, rgba(10, 10, 10, 0.9), rgba(99, 102, 241, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cyber-auth-container {
+    max-width: 400px;
+    width: 100%;
+    margin: 2rem auto;
+}
+
+/* Verification Card */
+.cyber-verification-card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    box-shadow: var(--shadow-cyber);
+    max-width: 500px;
+    margin: 4rem auto;
+}
+
+.cyber-verification-icon {
+    color: var(--cyber-indigo);
+}
+
+.cyber-verification-title {
+    color: var(--cyber-white);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.cyber-verification-text {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.cyber-email-highlight {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid var(--cyber-indigo);
+    border-radius: 10px;
+    padding: 1rem;
+    color: var(--cyber-indigo);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 1rem 0;
+}
+
+.cyber-verification-actions {
+    margin-top: 2rem;
+}
+
+/* Auth Card */
+.cyber-auth-card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-cyber);
+    overflow: hidden;
+}
+
+.cyber-auth-card-body {
+    padding: 2.5rem;
+}
+
+.cyber-auth-header {
+    margin-bottom: 2rem;
+}
+
+.cyber-auth-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.cyber-auth-title {
+    color: var(--cyber-white);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.cyber-auth-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+}
+
+/* Form Styles */
+.cyber-auth-form {
+    margin-top: 2rem;
+}
+
+.cyber-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.cyber-form-label {
+    color: var(--cyber-white);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.cyber-input-group {
+    position: relative;
+}
+
+.cyber-input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
+    z-index: 2;
+}
+
+.cyber-form-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--cyber-white);
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.cyber-form-input:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--cyber-indigo);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    color: var(--cyber-white);
+}
+
+.cyber-form-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Checkbox Styles */
+.cyber-form-check {
+    display: flex;
+    align-items: center;
+}
+
+.cyber-checkbox {
+    margin-right: 0.5rem;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--cyber-indigo);
+}
+
+.cyber-checkbox-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.cyber-forgot-link {
+    color: var(--cyber-indigo);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.cyber-forgot-link:hover {
+    color: var(--cyber-emerald);
+}
+
+/* Auth Button */
+.cyber-auth-btn {
+    border-radius: 12px;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: none;
+    background: linear-gradient(135deg, var(--cyber-indigo), #4F46E5);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.cyber-auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
+/* Divider */
+.cyber-auth-divider {
+    text-align: center;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.cyber-auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.cyber-auth-divider span {
+    background: var(--glass-bg);
+    padding: 0 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+/* Footer Links */
+.cyber-auth-footer {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.cyber-auth-link {
+    color: var(--cyber-indigo);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.cyber-auth-link:hover {
+    color: var(--cyber-emerald);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .cyber-auth-card-body {
+        padding: 2rem 1.5rem;
+    }
+    
+    .cyber-verification-card {
+        margin: 2rem 1rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .cyber-auth-container {
+        margin: 1rem;
+    }
+}
+</style>
 {% endblock %}

@@ -1,12 +1,27 @@
+/* ================= CYBER MINIMAL RESPONSIVE DESIGN ================= */
 .mobile-block {
   display: none;
 }
 
 @media (max-width: 1200px) {
-  /* tablet devices */
+  /* ================= TABLET DEVICES ================= */
+  .container {
+    max-width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .card-product-grid .img-wrap {
+    height: 200px;
+  }
+  
+  .navbar-main .nav-link {
+    padding: 0.5rem 0.8rem !important;
+  }
 }
+
 @media (max-width: 992px) {
-  /* small tablet devices */
+  /* ================= SMALL TABLET DEVICES ================= */
   .slider-main .item-slide {
     height: auto;
   }
@@ -14,31 +29,49 @@
   .table-shopping-cart tr td:first-child {
     width: 250px;
   }
+  
   .table-shopping-cart .itemside .info {
     padding: 0;
   }
+  
   .table-shopping-cart .itemside .aside {
     display: none;
   }
+  
+  /* ================= CYBER MOBILE OPTIMIZATIONS ================= */
+  .section-title::after {
+    width: 40px;
+  }
+  
+  .card-product-grid:hover {
+    transform: translateY(-5px);
+  }
+  
+  .btn {
+    padding: 0.875rem 1.5rem;
+  }
 }
+
 @media all and (max-width: 768px) {
-  /* mobile devices */
+  /* ================= MOBILE DEVICES ================= */
   .mobile-block {
     display: block;
   }
 
   .mobile-hide {
-    display: none;
+    display: none !important;
   }
 
   .section-header .logo {
-    max-height: 40px;
+    max-height: 35px;
     width: auto;
   }
+  
   .section-header .header-main .brand-wrap {
     margin-bottom: 1rem;
     display: inline-block;
   }
+  
   .section-header .header-main .search {
     margin-bottom: 1rem;
   }
@@ -78,7 +111,224 @@
 
   .navbar-expand .navbar-collapse {
     flex-direction: column;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    margin-top: 10px;
+    padding: 1rem;
+  }
+  
+  /* ================= CYBER MOBILE MENU ================= */
+  .navbar-main .nav-link {
+    padding: 0.75rem 1rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    text-align: center;
+  }
+  
+  .navbar-main .nav-link:last-child {
+    border-bottom: none;
+  }
+  
+  .navbar-main .nav-link::before {
+    display: none;
+  }
+  
+  /* ================= MOBILE PRODUCT GRID ================= */
+  .card-product-grid {
+    margin-bottom: 1.5rem;
+  }
+  
+  .card-product-grid .img-wrap {
+    height: 180px;
+  }
+  
+  /* ================= MOBILE BUTTONS ================= */
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .btn-group .btn {
+    width: auto;
+  }
+  
+  /* ================= MOBILE FORMS ================= */
+  .form-control {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* ================= MOBILE UTILITIES ================= */
+  .text-center-mobile {
+    text-align: center;
+  }
+  
+  .hide-on-mobile {
+    display: none !important;
+  }
+  
+  .show-on-mobile {
+    display: block !important;
   }
 }
 
-/*# sourceMappingURL=responsive.css.map */
+@media (max-width: 576px) {
+  /* ================= SMALL MOBILE DEVICES ================= */
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .card-product-grid .img-wrap {
+    height: 160px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .lead {
+    font-size: 1rem;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .form-control {
+    padding: 0.75rem 1rem;
+  }
+  
+  /* ================= MOBILE TYPOGRAPHY ================= */
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+  h4 { font-size: 1.25rem; }
+  h5 { font-size: 1.1rem; }
+  h6 { font-size: 1rem; }
+  
+  /* ================= MOBILE SPACING ================= */
+  .padding-y {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+  
+  .padding-top {
+    padding-top: 30px;
+  }
+  
+  .padding-bottom {
+    padding-bottom: 30px;
+  }
+  
+  .padding-y-lg {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+  
+  .padding-top-lg {
+    padding-top: 50px;
+  }
+  
+  .padding-bottom-lg {
+    padding-bottom: 50px;
+  }
+}
+
+@media (max-width: 400px) {
+  /* ================= EXTRA SMALL DEVICES ================= */
+  .card-product-grid .img-wrap {
+    height: 140px;
+  }
+  
+  .widget-header form {
+    min-width: 250px;
+  }
+  
+  .btn {
+    padding: 0.675rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ================= DARK MODE SUPPORT ================= */
+@media (prefers-color-scheme: dark) {
+  .auto-dark-mode {
+    background-color: var(--cyber-black);
+    color: var(--cyber-white);
+  }
+}
+
+/* ================= REDUCED MOTION SUPPORT ================= */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .card-product-grid:hover {
+    transform: none;
+  }
+  
+  .btn:hover {
+    transform: none;
+  }
+}
+
+/* ================= HIGH CONTRAST MODE ================= */
+@media (prefers-contrast: high) {
+  :root {
+    --cyber-black: #000000;
+    --cyber-white: #FFFFFF;
+    --glass-border: rgba(255, 255, 255, 0.3);
+  }
+  
+  .card-product-grid {
+    border: 2px solid var(--glass-border);
+  }
+}
+
+/* ================= PRINT STYLES ================= */
+@media print {
+  .navbar-main,
+  .section-footer,
+  .btn,
+  .widget-header {
+    display: none !important;
+  }
+  
+  .card-product-grid {
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* ================= LANDSCAPE MOBILE OPTIMIZATIONS ================= */
+@media (max-height: 600px) and (orientation: landscape) {
+  .navbar-main {
+    padding: 0.5rem 0;
+  }
+  
+  .section-header .logo {
+    max-height: 30px;
+  }
+  
+  .card-product-grid .img-wrap {
+    height: 120px;
+  }
+}
+
+/* ================= 2X DISPLAY OPTIMIZATIONS ================= */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .brand-wrap .logo {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}

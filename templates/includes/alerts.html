@@ -1,20 +1,22 @@
 {% if messages %}
-
-    
-
-        <div id="message" class="container">
-
-                {% for message in messages %} 
-            <div  {% if message.tags %}  class="alert alert-{{ message.tags }}" {% endif %} role="alert">
-                
-                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} Importante: {% endif %}
-                {{ message }}
-            </div>
-                {% endfor %}
-
-
+<div id="message" class="container mt-3">
+    {% for message in messages %}
+    <div class="notification {% if message.tags %}{{ message.tags }}{% endif %} reveal-up" role="alert">
+        <div class="d-flex align-items-center">
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+            <strong class="me-2">⚠️ Importante:</strong>
+            {% elif message.tags == 'success' %}
+            <i class="fas fa-check-circle text-success me-2"></i>
+            {% elif message.tags == 'warning' %}
+            <i class="fas fa-exclamation-circle text-warning me-2"></i>
+            {% elif message.tags == 'info' %}
+            <i class="fas fa-info-circle text-info me-2"></i>
+            {% endif %}
+            <span class="flex-grow-1">{{ message }}</span>
+            <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-
-        
-
+    </div>
+    {% endfor %}
+</div>
 {% endif %}

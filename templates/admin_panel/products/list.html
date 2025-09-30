@@ -1,118 +1,186 @@
 {% extends 'admin_panel/base.html' %}
 {% load humanize %}
+{% load static %}
 
-{% block title %}Productos - Panel Admin{% endblock %}
-{% block page_title %}Gestión de Productos{% endblock %}
+{% block title %}Productos - DavBorn Store{% endblock %}
+{% block page_title %}📦 Gestión de Productos{% endblock %}
 
 {% block content %}
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Cyber Minimal CSS -->
+<link href="{% static 'css/cyber-minimal.css' %}" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 <div class="card card-dashboard">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">Lista de Productos</h5>
+        <h5 class="card-title mb-0">📋 Lista de Productos</h5>
         <div>
-            <a href="{% url 'admin_panel:product_add' %}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Nuevo Producto
+            <a href="{% url 'admin_panel:product_add' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>➕ Nuevo Producto
             </a>
         </div>
     </div>
     <div class="card-body">
         <!-- Filtros -->
         <div class="row mb-4">
-            <div class="col-md-6">
-                <form method="get" class="row g-2">
-                    <div class="col-md-5">
+            <div class="col-md-8">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">📂 Filtrar por categoría</label>
                         <select name="category" class="form-select">
-                            <option value="">Todas las categorías</option>
+                            <option value="">📁 Todas las categorías</option>
                             {% for category in categories %}
                             <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"i" %}selected{% endif %}>
-                                {{ category.category_name }}
+                                📂 {{ category.category_name }}
                             </option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
+                        <label class="form-label">📊 Filtrar por stock</label>
                         <select name="stock" class="form-select">
-                            <option value="">Todo el stock</option>
-                            <option value="low" {% if request.GET.stock == 'low' %}selected{% endif %}>Stock bajo (≤10)</option>
-                            <option value="out" {% if request.GET.stock == 'out' %}selected{% endif %}>Sin stock</option>
+                            <option value="">📦 Todo el stock</option>
+                            <option value="low" {% if request.GET.stock == 'low' %}selected{% endif %}>⚠️ Stock bajo (≤10)</option>
+                            <option value="out" {% if request.GET.stock == 'out' %}selected{% endif %}>❌ Sin stock</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-outline-primary w-100">Filtrar</button>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i>🔍 Filtrar
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- Tabla de productos -->
+        {% if products %}
         <div class="table-responsive">
             <table class="table table-hover">
-                <thead class="table-light">
+                <thead>
                     <tr>
-                        <th>Imagen</th>
-                        <th>Nombre</th>
-                        <th>Categoría</th>
-                        <th>Precio</th>
-                        <th>Stock</th>
-                        <th>Estado</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
+                        <th>🖼️ Imagen</th>
+                        <th>📛 Nombre</th>
+                        <th>📂 Categoría</th>
+                        <th>💰 Precio</th>
+                        <th>📦 Stock</th>
+                        <th>📊 Estado</th>
+                        <th>📅 Fecha</th>
+                        <th>⚡ Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for product in products %}
-                    <tr>
+                    <tr class="hover-lift">
                         <td>
                             {% if product.images %}
                             <img src="{{ product.images.url }}" alt="{{ product.product_name }}" 
-                                 style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                                 class="rounded hover-lift" 
+                                 style="width: 60px; height: 60px; object-fit: cover;">
                             {% else %}
-                            <div class="bg-light rounded d-flex align-items-center justify-content-center" 
-                                 style="width: 50px; height: 50px;">
+                            <div class="glass-effect rounded d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
                                 <i class="fas fa-image text-muted"></i>
                             </div>
                             {% endif %}
                         </td>
                         <td>
-                            <strong>{{ product.product_name }}</strong>
+                            <strong class="text-white">{{ product.product_name }}</strong>
                             <br>
-                            <small class="text-muted">{{ product.description|truncatewords:5 }}</small>
+                            <small class="text-muted">{{ product.description|truncatewords:6|default:"Sin descripción" }}</small>
                         </td>
-                        <td>{{ product.category.category_name }}</td>
-                        <td>Gs. {{ product.price|floatformat:0|intcomma }}</td>
                         <td>
-                            <span class="badge {% if product.stock == 0 %}bg-danger{% elif product.stock <= 10 %}bg-warning{% else %}bg-success{% endif %}">
+                            <span class="badge bg-secondary">📂 {{ product.category.category_name }}</span>
+                        </td>
+                        <td>
+                            <strong class="text-success">Gs. {{ product.price|floatformat:0|intcomma }}</strong>
+                        </td>
+                        <td>
+                            <span class="badge fs-6 {% if product.stock == 0 %}bg-danger{% elif product.stock <= 10 %}bg-warning text-dark{% else %}bg-success{% endif %}">
                                 {{ product.stock }} unidades
                             </span>
                         </td>
                         <td>
-                            <span class="badge {% if product.is_available %}bg-success{% else %}bg-danger{% endif %}">
-                                {{ product.is_available|yesno:"Disponible,No disponible" }}
+                            <span class="badge fs-6 {% if product.is_available %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ product.is_available|yesno:"✅ Disponible,❌ No disponible" }}
                             </span>
                         </td>
-                        <td>{{ product.created_date|date:"d/m/Y" }}</td>
+                        <td>
+                            <small class="text-muted">{{ product.created_date|date:"d/m/Y" }}</small>
+                        </td>
                         <td>
                             <div class="btn-group table-actions">
-                                <a href="{% url 'admin_panel:product_edit' product.id %}" class="btn btn-sm btn-outline-primary" title="Editar">
-                                    <i class="fas fa-edit"></i>
+                                <a href="{% url 'admin_panel:product_edit' product.id %}" 
+                                   class="btn btn-sm btn-outline-primary hover-lift" 
+                                   title="Editar producto">
+                                    <i class="fas fa-edit me-1"></i>✏️
                                 </a>
-                                <a href="{% url 'admin_panel:product_delete' product.id %}" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
+                                <a href="{% url 'admin_panel:product_delete' product.id %}" 
+                                   class="btn btn-sm btn-outline-danger hover-lift" 
+                                   title="Eliminar producto">
+                                    <i class="fas fa-trash me-1"></i>🗑️
                                 </a>
                             </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="8" class="text-center py-4">
-                            <i class="fas fa-box-open fa-2x text-muted mb-2"></i>
-                            <p class="text-muted">No hay productos registrados</p>
-                            <a href="{% url 'admin_panel:product_add' %}" class="btn btn-primary">Agregar Primer Producto</a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        <!-- Estadísticas -->
+        <div class="row mt-4 pt-4 border-top">
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-gradient">{{ total_products }}</h3>
+                        <p class="text-muted mb-0">Total Productos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">{{ available_products }}</h3>
+                        <p class="text-muted mb-0">Disponibles</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-warning">{{ low_stock_products }}</h3>
+                        <p class="text-muted mb-0">Stock Bajo</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card glass-effect text-center">
+                    <div class="card-body">
+                        <h3 class="text-danger">{{ out_of_stock_products }}</h3>
+                        <p class="text-muted mb-0">Sin Stock</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
+        <div class="text-center py-5">
+            <div class="cyber-glow mb-4">
+                <i class="fas fa-box-open fa-4x text-muted"></i>
+            </div>
+            <h4 class="text-white mb-3">📭 No hay productos registrados</h4>
+            <p class="text-muted mb-4">Comienza agregando tu primer producto para vender en DavBorn Store.</p>
+            <a href="{% url 'admin_panel:product_add' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>➕ Agregar Primer Producto
+            </a>
+        </div>
+        {% endif %}
     </div>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
