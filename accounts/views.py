@@ -37,7 +37,7 @@ def register(request):
             profile.save()
 
             current_site = get_current_site(request)
-            mail_subject = 'Por favor activa tu cuneta en XdLand'
+            mail_subject = 'Por favor activa tu cuneta en DavBorn Store'
             body = render_to_string('accounts/account_verification_email.html', {
                 'user': user,
                 'domain': current_site,
