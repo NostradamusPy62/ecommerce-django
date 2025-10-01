@@ -3,6 +3,7 @@ from category.models import Category
 from django.urls import reverse
 from accounts.models import Account
 from django.db.models import Avg, Count
+from django.utils.text import slugify
 
 # Create your models here.
 class Product(models.Model):
@@ -19,7 +20,13 @@ class Product(models.Model):
 
 
     def get_url(self):
-        return reverse('product_detail', args=[self.category.slug, self.slug])
+        # CORRECCIÓN: Usamos kwargs (argumentos de palabra clave)
+        # para mapear 'category_slug' y 'product_slug' a los valores correctos.
+        # Esto coincide con los nombres de parámetros que tu patrón de URL espera.
+        return reverse('product_detail', kwargs={
+            'category_slug': self.category.slug, 
+            'product_slug': self.slug
+        })
 
 
     def __str__(self):
@@ -31,16 +38,20 @@ class Product(models.Model):
         if reviews['average'] is not None:
             avg = float(reviews['average'])
         return avg
+    
     def countReview(self):
         reviews = ReviwRating.objects.filter(product=self, status=True).aggregate(count=Count('id'))
         count = 0
         if reviews['count'] is not None:
             count = int(reviews['count'])
-
-
         return count
     
-
+    def save(self, *args, **kwargs):
+        # Si el slug está vacío, generarlo automáticamente
+        if not self.slug or self.slug == '':
+            self.slug = slugify(self.product_name)
+        super().save(*args, **kwargs)
+    
 
 
 class VariationManager(models.Manager):
@@ -68,8 +79,6 @@ class Variation(models.Model):
     def __str__(self):
         return self.variation_category + ':' + self.variation_value
     
-
-
 class ReviwRating(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(Account, on_delete=models.CASCADE)

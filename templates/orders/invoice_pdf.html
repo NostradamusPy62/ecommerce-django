@@ -3,46 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
-        h2 { text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #000; padding: 5px; text-align: center; }
-        .total { font-weight: bold; }
+        body { font-family: Arial, sans-serif; font-size: 10px; line-height: 1.2; }
+        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+        .empresa-info { margin-bottom: 15px; }
+        .cliente-info { margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #000; padding: 4px; text-align: center; font-size: 9px; }
+        .totales { margin-top: 15px; }
+        .footer { margin-top: 20px; font-size: 8px; text-align: center; }
+        .iva-table { width: 60%; margin-left: auto; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .bold { font-weight: bold; }
     </style>
 </head>
 <body>
-    <h2>Factura - Pedido #{{ order_number }}</h2>
-    <p><strong>Cliente:</strong> {{ order.full_name }}</p>
-    <p><strong>RUC/CI:</strong> {{ order.ruc|default:"N/A" }}</p>
-    <p><strong>Email:</strong> {{ order.email }}</p>
-    <p><strong>Teléfono:</strong> {{ order.phone }}</p>
-    <p><strong>Dirección:</strong> {{ order.address_line_1 }} {{ order.address_line_2 }}</p>
+    <!-- Encabezado -->
+    <div class="header">
+        <h2>DAVBORN STORE</h2>
+        <p>RUC: 6771099-0</p>
+        <p>Km5 Monday Presidente Franco - Tel: +595 984 538502</p>
+        <p>Comercio de productos electronicos, oficina, gaming, etc</p>
+        <h3>FACTURA ELECTRÓNICA</h3>
+    </div>
 
+    <!-- Información del Cliente -->
+    <div class="cliente-info">
+        <p><strong>Nombre o Razón Social:</strong> {{ order.full_name }}</p>
+        <p><strong>RUC / Documento de Identidad:</strong> {{ order.ruc|default:"N/A" }}</p>
+        <p><strong>Dirección:</strong> {{ order.address_line_1 }} {{ order.address_line_2 }}</p>
+        <p><strong>Correo Electrónico:</strong> {{ order.email }}</p>
+        <p><strong>Teléfono:</strong> {{ order.phone }}</p>
+    </div>
+
+    <!-- Información de Factura -->
+    <table>
+        <tr>
+            <td><strong>Fecha y hora de emisión:</strong> {{ order.created_at|date:"d/m/Y H:i:s" }}</td>
+            <td><strong>Cond. de venta:</strong> Contado</td>
+        </tr>
+        <tr>
+            <td><strong>N° Factura:</strong> {{ order.numero_factura }}</td>
+            <td><strong>Timbrado:</strong> {{ order.timbrado }} (Vigente: 21/09/2025 al 21/09/2030)</td>
+        </tr>
+    </table>
+
+    <!-- Tabla de Productos -->
     <table>
         <thead>
             <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio Unitario</th>
-                <th>Subtotal</th>
+                <th width="10%">Código</th>
+                <th width="40%">Descripción</th>
+                <th width="10%">Unidad</th>
+                <th width="10%">Cantidad</th>
+                <th width="15%">Precio unitario</th>
+                <th width="15%">Exentas</th>
+                <th width="15%">5%</th>
+                <th width="15%">10%</th>
             </tr>
         </thead>
         <tbody>
             {% for item in items %}
             <tr>
-                <td>{{ item.product_name }}</td>
+                <td>{{ forloop.counter }}</td>
+                <td class="text-left">{{ item.product.product_name }}</td>
+                <td>UNI</td>
                 <td>{{ item.quantity }}</td>
-                <td>{{ item.price }} Gs.</td>
-                <td>{{ item.subtotal }} Gs.</td>
+                <td class="text-right">{{ item.price|floatformat:0 }} Gs.</td>
+                <td class="text-right">0</td>
+                <td class="text-right">0</td>
+                <td class="text-right">{{ item.subtotal|floatformat:0 }} Gs.</td>
             </tr>
             {% endfor %}
         </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3" class="total">Total General</td>
-                <td class="total">{{ order.order_total }} Gs.</td>
-            </tr>
-        </tfoot>
     </table>
+
+    <!-- Totales e IVA -->
+    <table class="iva-table">
+        <tr>
+            <td><strong>SUBTOTAL</strong></td>
+            <td class="text-right">{{ order.order_total|floatformat:0 }} Gs.</td>
+        </tr>
+        <tr>
+            <td><strong>TOTAL DE LA OPERACIÓN</strong></td>
+            <td class="text-right">{{ order.order_total|floatformat:0 }} Gs.</td>
+        </tr>
+        <tr>
+            <td><strong>TOTAL EN GUARANÍES</strong></td>
+            <td class="text-right">{{ order.order_total|floatformat:0 }} Gs.</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>LIQUIDACIÓN IVA</strong></td>
+        </tr>
+        <tr>
+            <td>5%</td>
+            <td class="text-right">0</td>
+        </tr>
+        <tr>
+            <td>10%</td>
+            <td class="text-right">{{ order.order_total|floatformat:0 }} Gs.</td>
+        </tr>
+        <tr class="bold">
+            <td><strong>TOTAL IVA</strong></td>
+            <td class="text-right">{{ order.order_total|floatformat:0 }} Gs.</td>
+        </tr>
+    </table>
+
+    <!-- Pie de página -->
+    <div class="footer">
+        <p>ESTE DOCUMENTO ES UNA REPRESENTACIÓN GRÁFICA DE UN DOCUMENTO ELECTRÓNICO (XML)</p>
+        <p>Para consultas: surubi991@gmail.com | +595 984 538502</p>
+        <p>Consulte la validez de esta Factura Electrónica con el número de CDC impreso abajo</p>
+        <p><strong>CDC:</strong> {{ order.numero_factura }}{{ order.timbrado }}</p>
+    </div>
 </body>
 </html>

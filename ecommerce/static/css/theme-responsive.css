@@ -1,0 +1,200 @@
+/* ========================================================================
+   RESPONSIVE CSS (Mobile First Overrides)
+   Usando breakpoints de max-width para reducir progresivamente los estilos
+   ======================================================================== */
+
+/* Utilidades básicas de visibilidad (mantener) */
+.mobile-block {
+  display: none;
+}
+.mobile-hide {
+  display: none;
+}
+
+/* ------------------------------------------------------------------------
+   @media (max-width: 1200px) - Escritorio Pequeño / Tablet XL
+   Ajustes menores para pantallas con menos espacio horizontal.
+   ------------------------------------------------------------------------ */
+@media (max-width: 1200px) {
+  /* Contenedor: Reducir ligeramente el ancho máximo y padding */
+  .container {
+    max-width: 960px; /* Ya definido en el main CSS, pero lo forzamos aquí */
+  }
+
+  /* Espaciado: Reducir padding horizontal general */
+  .p-xl-5 { padding: var(--spacing-4) !important; }
+  .px-xl-5 { padding-left: var(--spacing-4) !important; padding-right: var(--spacing-4) !important; }
+
+  /* Tipografía: Reducir tamaño de fuente de títulos grandes */
+  h1 { font-size: 2.25rem; }
+}
+
+/* ------------------------------------------------------------------------
+   @media (max-width: 992px) - Tablet Grande (lg)
+   Ajustes para un diseño más denso y enfocado.
+   ------------------------------------------------------------------------ */
+@media (max-width: 992px) {
+  /* Contenedor: Ajuste final de contenedor para tablet */
+  .container {
+    max-width: 720px;
+  }
+  
+  /* Botones: Ligeramente más compactos */
+  .btn-lg {
+    padding: 0.65rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  /* Tarjetas (Cards): Reducir la sombra para hacerlas menos "flotantes" en pantallas pequeñas */
+  .card:hover {
+    box-shadow: var(--shadow);
+    transform: none; /* Desactivar efecto 3D al pasar el ratón */
+  }
+
+  /* Títulos: Ajuste de tamaño para tablet */
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+
+  /* Slider (Mantener reglas existentes) */
+  .slider-main .item-slide {
+    height: auto;
+  }
+
+  /* Carrito de Compras (Mantener y refinar) */
+  .table-shopping-cart tr td:first-child {
+    width: 250px;
+  }
+  .table-shopping-cart .itemside .info {
+    padding: 0;
+  }
+  .table-shopping-cart .itemside .aside {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------------
+   @media all and (max-width: 768px) - Móviles y Tablet Pequeña (md)
+   Aquí el diseño debe ser apilado, intuitivo y fácil de tocar (touch-friendly).
+   ------------------------------------------------------------------------ */
+@media all and (max-width: 768px) {
+  /* Visibilidad (Mantener reglas existentes) */
+  .mobile-block {
+    display: block;
+  }
+  .mobile-hide {
+    display: none;
+  }
+
+  /* Contenedor: Usar el 100% del ancho */
+  .container, .container-fluid {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+
+  /* Espaciado: Reducir el espaciado vertical de las secciones */
+  .section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  /* Botones (Ajuste global para touch) */
+  .btn {
+    padding: 0.7rem 1rem; /* Hacerlos más grandes y fáciles de tocar */
+    font-size: 0.95rem;
+    border-radius: 0.45rem;
+  }
+  
+  /* Formularios: Campos de formulario más grandes y fáciles de usar */
+  .form-control {
+    padding: 0.8rem 1rem;
+    border-radius: 0.45rem;
+  }
+
+  /* Tipografía: Ajuste para móvil */
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.35rem; }
+  
+  /* Cabecera (Mantener reglas existentes) */
+  .section-header .logo {
+    max-height: 40px;
+    width: auto;
+  }
+  .section-header .header-main .brand-wrap {
+    margin-bottom: 0.75rem; /* Usar variable de espaciado */
+    display: inline-block;
+  }
+  .section-header .header-main .search {
+    margin-bottom: 0.75rem; /* Usar variable de espaciado */
+  }
+
+  /* Navegación (Navbar) */
+  .navbar-expand .navbar-collapse {
+    flex-direction: column;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-top: 1px solid var(--border-color); /* Separador suave */
+  }
+  .nav-link {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    width: 100%;
+  }
+
+  /* Tarjetas (Cards) */
+  .item-feature {
+    margin-bottom: var(--spacing-3); /* Usar variable de espaciado */
+  }
+  
+  /* Flexbox Order (Mantener reglas existentes) */
+  .mobile-order-first {
+    order: -1;
+  }
+  .mobile-order-1 {
+    order: 1;
+  }
+  .mobile-order-2 {
+    order: 2;
+  }
+  .mobile-order-3 {
+    order: 3;
+  }
+
+  /* Padding Utilities (Usar variables para consistencia) */
+  .mobile-py {
+    padding-top: var(--spacing-3);
+    padding-bottom: var(--spacing-3);
+  }
+  .mobile-pb {
+    padding-bottom: var(--spacing-3);
+  }
+  .mobile-pt {
+    padding-top: var(--spacing-3);
+  }
+}
+
+/* ------------------------------------------------------------------------
+   @media all and (max-width: 576px) - Teléfonos muy pequeños (xs)
+   Ajustes para asegurar que no haya desbordamiento.
+   ------------------------------------------------------------------------ */
+@media all and (max-width: 576px) {
+  /* Títulos: Reducción final para espacio crítico */
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+
+  /* Utilidades de Grid: Forzar apilamiento de columnas pequeñas (si no se1 usa .col-12) */
+  .col-4, .col-3, .col-2, .col-1 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  /* Botones: Si hay muchos botones juntos, hacerlos block */
+  .btn-group {
+    display: block;
+  }
+  .btn-group .btn {
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
+}
+
+/*# sourceMappingURL=responsive.css.map */

@@ -2,118 +2,155 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar con funcionalidades -->
-        <div class="col-md-3 sidebar">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Funciones del Chat</h5>
-                </div>
-                <div class="card-body">
-                    <button class="btn btn-outline-primary btn-sm mb-2 w-100" onclick="generateStockPDF()">
-                        📊 Descargar Stock PDF
-                    </button>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Productos por Categoría:</label>
-                        <select class="form-select" id="categorySelect" onchange="getProductsByCategory()">
-                            <option value="">Seleccionar categoría</option>
-                            {% for category in categories %}
-                            <option value="{{ category.id }}">{{ category.category_name }}</option>
-                            {% endfor %}
-                        </select>
+<!-- Contenedor principal con padding para un mejor espacio vertical -->
+<section class="section-content padding-y">
+    <div class="container-fluid">
+        <!-- El chat ocupa el 75% en desktop y la sidebar el 25% -->
+        <div class="row">
+            
+            <!-- ============================ BARRA LATERAL (SIDEBAR) ============================ -->
+            <!-- Más ancho en pantallas medianas (col-md-4) y delgado en grandes (col-lg-3) -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="font-weight-bold text-secondary mb-0">🤖 Funciones de Asistente</h5>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Comparar Productos:</label>
-                        <select class="form-select" id="productSelect1">
-                            <option value="">Producto 1</option>
-                        </select>
-                        <select class="form-select mt-2" id="productSelect2">
-                            <option value="">Producto 2</option>
-                        </select>
-                        <button class="btn btn-outline-success btn-sm mt-2 w-100" onclick="compareProducts()">
-                            🔄 Comparar
+                    <div class="card-body">
+                        
+                        <!-- Botón de Acción Principal (w-100 es equivalente a btn-block) -->
+                        <button class="btn btn-primary w-100 mb-3" onclick="generateStockPDF()">
+                            📊 Descargar Stock PDF
                         </button>
-                    </div>
-                </div>
-            </div>
+                        
+                        <hr class="my-3">
 
-            <!-- Resultados de categorías -->
-            <div id="categoryResults" class="mt-3" style="display: none;">
-                <div class="card">
-                    <div class="card-header">
-                        <h6>Productos de la categoría</h6>
-                    </div>
-                    <div class="card-body" id="categoryProductsList">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Área principal del chat -->
-        <div class="col-md-9">
-            <div class="card chat-container">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">💬 Asistente Virtual</h4>
-                    <span class="badge bg-light text-primary" id="connectionStatus">Conectado</span>
-                </div>
-
-                <div class="card-body chat-messages" id="chatMessages">
-                    {% for message in messages %}
-                    <div class="message user-message">
-                        <div class="message-header">
-                            <strong>{% if message.user %}{{ message.user.username }}{% else %}Tú{% endif %}</strong>
-                            <small class="text-muted">{{ message.timestamp|date:"H:i" }}</small>
+                        <!-- Productos por Categoría -->
+                        <div class="form-group mb-4">
+                            <label class="form-label font-weight-bold text-dark small">PRODUCTOS POR CATEGORÍA:</label>
+                            <select class="form-control" id="categorySelect" onchange="getProductsByCategory()">
+                                <option value="">Seleccionar categoría</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.category_name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
-                        <div class="message-content">{{ message.user_message }}</div>
-                    </div>
-                    <div class="message bot-message">
-                        <div class="message-header">
-                            <strong>🤖 Asistente</strong>
-                            <small class="text-muted">{{ message.timestamp|date:"H:i" }}</small>
-                        </div>
-                        <div class="message-content">{{ message.bot_response|linebreaks }}</div>
-                    </div>
-                    {% empty %}
-                    <div class="text-center text-muted mt-5">
-                        <p>¡Bienvenido! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?</p>
-                        <p>Puedo ayudarte con:</p>
-                        <ul class="list-unstyled">
-                            <li>✅ Información de productos y stock</li>
-                            <li>✅ Proceso de compra y envíos</li>
-                            <li>✅ Gestión de tu cuenta</li>
-                            <li>✅ Comparación de productos</li>
-                        </ul>
-                    </div>
-                    {% endfor %}
-                </div>
 
-                <div class="card-footer">
-                    <form id="chatForm">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            {{ form.message }}
-                            <button type="submit" class="btn btn-primary" id="sendButton">
-                                <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
-                                <span id="buttonText">Enviar</span>
+                        <!-- Comparar Productos -->
+                        <div class="form-group mb-3">
+                            <label class="form-label font-weight-bold text-dark small">COMPARAR PRODUCTOS:</label>
+                            <select class="form-control mb-2" id="productSelect1">
+                                <option value="">Producto 1</option>
+                            </select>
+                            <select class="form-control" id="productSelect2">
+                                <option value="">Producto 2</option>
+                            </select>
+                            <button class="btn btn-outline-success w-100 mt-3" onclick="compareProducts()">
+                                🔄 Comparar
                             </button>
                         </div>
-                    </form>
+                    </div>
+                </div>
+
+                <!-- Resultados de categorías -->
+                <div id="categoryResults" class="mt-3" style="display: none;">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light border-bottom">
+                            <h6 class="mb-0 text-secondary">Resultados de la Categoría</h6>
+                        </div>
+                        <div class="card-body p-3" id="categoryProductsList">
+                            <!-- Lista de productos se insertará aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================ ÁREA PRINCIPAL DEL CHAT (CHATBOX) ============================ -->
+            <!-- Ocupa el 75% en desktop y siempre visible primero en móvil -->
+            <div class="col-md-8 col-lg-9">
+                <div class="card chat-container shadow-lg">
+                    
+                    <!-- Encabezado del Chat -->
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 font-weight-bold">💬 Asistente Virtual</h4>
+                        <span class="badge bg-light text-primary py-1 px-3 rounded-pill" id="connectionStatus">En línea</span>
+                    </div>
+
+                    <!-- Cuerpo de Mensajes -->
+                    <div class="card-body chat-messages" id="chatMessages">
+                        {% for message in messages %}
+                        
+                        <!-- Mensaje de Usuario (Usando d-flex para la alineación correcta) -->
+                        <div class="message user-message d-flex justify-content-end">
+                            <div class="message-bubble user-bubble bg-primary text-white shadow-sm">
+                                <div class="message-header text-right">
+                                    <small class="text-white-50">{{ message.timestamp|date:"H:i" }}</small>
+                                    <strong class="ml-2">Tú</strong>
+                                </div>
+                                <div class="message-content">
+                                    {{ message.user_message }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Respuesta del Bot (Usando d-flex para la alineación correcta) -->
+                        <div class="message bot-message d-flex justify-content-start">
+                            <div class="message-bubble bot-bubble bg-light border shadow-sm">
+                                <div class="message-header">
+                                    <strong>🤖 Asistente</strong>
+                                    <small class="text-muted ml-2">{{ message.timestamp|date:"H:i" }}</small>
+                                </div>
+                                <div class="message-content">
+                                    {{ message.bot_response|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {% empty %}
+                        <!-- Mensaje de bienvenida mejorado -->
+                        <div class="text-center text-muted my-5 p-5">
+                            <h5 class="mb-3">¡Bienvenido! 👋 Soy tu asistente virtual.</h5>
+                            <p>Estoy aquí para ayudarte con la gestión y la información de nuestros productos.</p>
+                            <ul class="list-unstyled d-inline-block text-left mt-3 small">
+                                <li>✅ Información de productos y stock</li>
+                                <li>✅ Proceso de compra y envíos</li>
+                                <li>✅ Comparación de productos</li>
+                            </ul>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Pie de página (Formulario de entrada) -->
+                    <div class="card-footer bg-white border-top">
+                        <form id="chatForm">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <!-- Línea corregida. DEBES añadir la clase 'form-control' y el 'placeholder' en tu forms.py de Django. -->
+                                {{ form.message }}
+                                
+                                <div class="input-group-append">
+                                    <!-- Botón de envío más grande y visible -->
+                                    <button type="submit" class="btn btn-primary btn-lg" id="sendButton">
+                                        <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+                                        <span id="buttonText">Enviar</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- Modal para comparación -->
+<!-- Modal para comparación (Ajustes de título y clases para mejor estética) -->
 <div class="modal fade" id="comparisonModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">🔍 Comparación de Productos</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content shadow-lg rounded-lg">
+            <div class="modal-header bg-light border-bottom">
+                <h5 class="modal-title text-secondary">🔍 Comparación de Productos</h5>
+                <!-- Usar la clase btn-close de Bootstrap 5 -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="comparisonContent">
             </div>

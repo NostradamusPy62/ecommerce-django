@@ -1,0 +1,45 @@
+@charset "UTF-8";
+
+:root {
+/* Paleta de colores principal - basada en azules */
+--blue: #239cdb;
+--indigo: #114e6d;
+--purple: #6f42c1;
+--pink: #e83e8c;
+--red: #dc3545;
+--orange: #fd7e14;
+--yellow: #ffc107;
+--green: #28a745;
+--teal: #20c997;
+--cyan: #17a2b8;
+--white: #ffffff;
+--gray: #6c757d;
+--gray-dark: #343a40;
+--gray-light: #a8b8c8;
+/* Colores de tema - corregidos para ser consistentes */
+--primary: #239cdb;
+--secondary: #114e6d;
+--success: #28a745;
+--info: #17a2b8;
+--warning: #ffc107;
+--danger: #dc3545;
+--light: #f8f9fa;
+--dark: #212529;
+--primary-light: #91cded;
+
+/* Colores de fondo y texto */
+--body-bg: #ffffff;
+--body-color: #212529;
+--border-color: #dee2e6;
+--link-color: #239cdb;
+--link-hover-color: #114e6d;
+/* Breakpoints */
+--breakpoint-xs: 0;
+--breakpoint-sm: 576px;
+--breakpoint-md: 768px;
+--breakpoint-lg: 992px;
+--breakpoint-xl: 1200px;
+/* Tipografía */
+--font-family-sans-serif: "Inter", Arial, "Helvetica Neue", "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+--font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}

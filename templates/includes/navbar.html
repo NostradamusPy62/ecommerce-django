@@ -7,7 +7,7 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarTop4">
+            <!-- <div class="collapse navbar-collapse" id="navbarTop4">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link"> Espanol </a>
@@ -19,7 +19,7 @@
                 <ul class="navbar-nav">
                     <li><a href="#" class="nav-link"> <i class="fa fa-envelope"></i> Email </a></li>
                     <li><a href="#" class="nav-link"> <i class="fa fa-phone"></i> Llamanos</a></li>
-                </ul> <!-- list-inline //  -->
+                </ul> list-inline //  -->
             </div> <!-- navbar-collapse .// -->
         </div> <!-- container //  -->
     </nav>
@@ -29,7 +29,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-2 col-md-3 col-6">
                     <a href="{% url 'home' %}" class="brand-wrap">
-                        <img class="logo" src="{% static './images/logo01.png' %}">
+                        <img class="logo" src="{% static './images/logoD.png' %}">
                     </a> <!-- brand-wrap.// -->
                 </div>
                 <div class="col-lg col-sm col-md col-6 flex-grow-0">
@@ -45,7 +45,8 @@
                         </div>
                     </div> <!-- category-wrap.// -->
                 </div> <!-- col.// -->
-                <a href="{% url 'store' %}" class="btn btn-outline-primary">Tienda</a>
+                <a href="{% url 'store' %}" class="btn btn-outline-primary mr-3">Tienda</a>
+                
                 <a href="{% url 'chat:chat' %}" class="btn btn-primary">Chat AI</a>
 
                 <div class="col-lg  col-md-6 col-sm-12 col">
